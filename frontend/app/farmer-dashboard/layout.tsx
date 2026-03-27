@@ -30,7 +30,7 @@ export default function FarmerDashboardLayout({
     { name: "Price Forecast", icon: "🔮", link: "/farmer-dashboard/price-prediction" },
     { name: "Yield Calculator", icon: "🧮", link: "/farmer-dashboard/calculator" },
     { name: "Mandi Prices", icon: "📈", link: "/farmer-dashboard/mandi-prices" },
-    { name: "Traceability", icon: "🌱", link: "/farmer-dashboard/traceability" },
+    { name: "Trade History", icon: "📜", link: "/farmer-dashboard/trade-history" },
   ];
 
   return (

@@ -141,6 +141,27 @@ export default function LoginPage() {
           <p className="text-lg text-[#2D503C] font-medium mt-1">Sign in to access your intelligence dashboard.</p>
         </div>
 
+        {/* Evaluator Access (Hackathon Purpose) */}
+        <div className="mb-6 bg-white/60 backdrop-blur-md rounded-[1.5rem] border border-[#E2DFD3] p-4 flex flex-col md:flex-row gap-3 items-center justify-between shadow-sm">
+          <span className="text-xs font-black uppercase tracking-widest text-[#627768]">Evaluator Access</span>
+          <div className="flex gap-2 w-full md:w-auto">
+            <button 
+              type="button" 
+              onClick={() => { setPhone("9758503545"); setPassword("12345678"); }}
+              className="flex-1 md:flex-none px-4 py-2 bg-[#E9F3E8] border border-[#10893E]/30 text-[#10893E] text-xs font-bold rounded-xl hover:bg-[#10893E] hover:text-white transition-colors"
+            >
+              🌾 Farmer Test
+            </button>
+            <button 
+              type="button" 
+              onClick={() => { setPhone("7307362841"); setPassword("12345678"); }}
+              className="flex-1 md:flex-none px-4 py-2 bg-[#FFF9E6] border border-[#FBC02D]/40 text-[#D49800] text-xs font-bold rounded-xl hover:bg-[#FBC02D] hover:text-[#0A2F1D] transition-colors"
+            >
+              🤝 Buyer Test
+            </button>
+          </div>
+        </div>
+
         {/* 3D Frosted Glass Form Card */}
         <form onSubmit={handleLogin} className="bg-white/80 backdrop-blur-xl p-10 rounded-[2rem] border border-[#E2DFD3] shadow-[0_20px_40px_rgba(10,47,29,0.08)] hover:shadow-[0_30px_60px_rgba(10,47,29,0.12)] transition-shadow duration-500">
           

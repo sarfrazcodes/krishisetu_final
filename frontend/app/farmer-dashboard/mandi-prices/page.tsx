@@ -244,9 +244,9 @@ export default function MandiPricesPage() {
                     </td>
 
                     <td className="py-4 px-6 text-center">
-                      <button className="opacity-0 group-hover:opacity-100 px-3 py-1.5 bg-[#0A2F1D] text-white text-xs font-bold rounded-lg shadow-md hover:bg-[#10893E] hover:-translate-y-0.5 transition-all duration-150">
-                        Sell Now
-                      </button>
+                      <div className="px-3 py-1.5 bg-[#0A2F1D] text-white text-xs font-bold rounded-lg shadow-md inline-block">
+                        {row.trend === 'up' ? 'Rise' : row.trend === 'down' ? 'Fall' : 'Stable'}
+                      </div>
                     </td>
 
                   </tr>

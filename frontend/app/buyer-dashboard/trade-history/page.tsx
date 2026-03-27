@@ -80,7 +80,7 @@ const TraceCard = ({ item, index }: { item: any; index: number }) => {
 };
 
 // --- MAIN PAGE ---
-export default function TraceabilityPage() {
+export default function TradeHistoryPage() {
   const [searchId, setSearchId] = useState("");
   const [activeTimeline, setActiveTimeline] = useState<string | null>(null);
   const [records, setRecords] = useState<any[]>([]);
@@ -142,11 +142,11 @@ export default function TraceabilityPage() {
       {/* CONDITIONAL RENDER: Ledger vs Timeline */}
       {!activeTimeline ? (
         <div className="space-y-4 max-w-4xl">
-          <h2 className="text-xl font-black text-[#0A2F1D] mb-4">Immutable Traceability Logs</h2>
+          <h2 className="text-xl font-black text-[#0A2F1D] mb-4">Completed Trades & Receipts</h2>
           {isLoading ? (
             <p className="text-[#627768] font-bold">Loading secure ledger items...</p>
           ) : records.length === 0 ? (
-            <p className="text-[#627768] font-bold">No traceability records found.</p>
+            <p className="text-[#627768] font-bold">No completed trades found.</p>
           ) : (
             records.map((trade) => (
               <div key={trade.id} className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(10,47,29,0.08)] transition-all duration-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -156,21 +156,21 @@ export default function TraceabilityPage() {
                   </div>
                   <div>
                     <h3 className="font-black text-lg text-[#0A2F1D] flex items-center gap-2">
-                      {trade.id} <CheckCircle2 className="w-4 h-4 text-[#10893E]"/>
+                       ORD-{trade.id.toString().substring(0, 5).toUpperCase()} <CheckCircle2 className="w-4 h-4 text-[#10893E]"/>
                     </h3>
-                    <p className="text-sm font-bold text-[#627768]">{trade.crop} • Logged on {new Date(trade.date).toLocaleDateString()}</p>
+                    <p className="text-sm font-bold text-[#627768]">Successfully traded {trade.crop} on {new Date(trade.date).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <div className="text-left md:text-right w-full md:w-auto">
-                  <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Origin Node</p>
-                  <p className="font-bold text-[#0A2F1D]">{trade.origin}</p>
+                  <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Traded With</p>
+                  <p className="font-bold text-[#0A2F1D]">Verified {trade.origin.includes("Buyer") ? "" : "Buyer"} ({trade.origin})</p>
                 </div>
                 <div className="text-left md:text-right w-full md:w-auto">
-                  <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Network Status</p>
-                  <p className="text-xl font-black text-[#10893E]">Verified</p>
+                  <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Status</p>
+                  <p className="text-xl font-black text-[#10893E]">Completed</p>
                 </div>
                 <button 
-                  onClick={() => setActiveTimeline(trade.id)}
+                  onClick={() => setActiveTimeline(`ORD-` + trade.id.toString().substring(0, 5).toUpperCase())}
                   className="w-full md:w-auto py-3 px-6 bg-white border border-[#EBE5D9] text-[#0A2F1D] rounded-xl font-bold shadow-sm hover:bg-[#FDF8EE] transition-colors mt-2 md:mt-0"
                 >
                   View Ledger
@@ -183,8 +183,8 @@ export default function TraceabilityPage() {
         <div className="max-w-5xl mx-auto relative pt-10">
           <div className="flex justify-between items-center mb-10">
             <div>
-              <h2 className="text-2xl font-black text-[#0A2F1D]">Immutable Record: {activeTimeline}</h2>
-              <p className="text-[#10893E] font-bold text-sm uppercase tracking-widest mt-1">Smart Contract Verified</p>
+              <h2 className="text-2xl font-black text-[#0A2F1D]">Trade Receipt: {activeTimeline}</h2>
+              <p className="text-[#10893E] font-bold text-sm uppercase tracking-widest mt-1">Smart Contract Settled</p>
             </div>
             <button 
               onClick={() => setActiveTimeline(null)}

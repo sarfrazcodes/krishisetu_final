@@ -30,6 +30,7 @@ export default function BuyerDashboardLayout({
     { name: "Market Analytics", icon: "📈", link: "/buyer-dashboard/analytics" },
     { name: "Mandi Rates", icon: "⚖️", link: "/buyer-dashboard/mandi-prices" },
     { name: "Farmer Network", icon: "🤝", link: "/buyer-dashboard/network" },
+    { name: "Trade History", icon: "📜", link: "/buyer-dashboard/trade-history" },
   ];
 
   return (
