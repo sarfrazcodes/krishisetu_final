@@ -111,7 +111,7 @@ export default function BuyerNotificationsPage() {
           {notifications.map((notif) => (
             <div 
               key={notif.id} 
-              className={`relative overflow-hidden glass-panel rounded-[2.5rem] transition-all duration-300 ${
+              className={`relative overflow-hidden bg-white border border-[#E2DFD3] shadow-sm rounded-[2.5rem] transition-all duration-300 ${
                 notif.isRead ? 'opacity-60 saturate-[0.8]' : 'hover:shadow-[0_20px_40px_rgba(10,47,29,0.1)] hover:-translate-y-1'
               }`}
             >

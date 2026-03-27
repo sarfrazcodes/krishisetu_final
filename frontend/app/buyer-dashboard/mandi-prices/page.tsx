@@ -106,7 +106,7 @@ export default function MandiRatesPage() {
         
         <div className="flex space-x-4 items-center">
           <Link href="/buyer-dashboard/notifications">
-            <button className="glass-panel p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 transition-all relative">
+            <button className="bg-white border border-[#E2DFD3] shadow-sm p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 transition-all relative">
               🔔<span className="absolute top-2 right-2 w-2 h-2 bg-[#FBC02D] rounded-full shadow-[0_0_8px_#FBC02D]"></span>
             </button>
           </Link>
@@ -114,7 +114,7 @@ export default function MandiRatesPage() {
       </header>
 
       {/* --- SEARCH & FILTER BAR --- */}
-      <div className="glass-panel p-4 rounded-2xl mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="bg-white border border-[#E2DFD3] shadow-sm p-4 rounded-2xl mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="flex-1 w-full relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8A9A90] w-5 h-5" />
           <input 
@@ -150,7 +150,7 @@ export default function MandiRatesPage() {
         {mandiData.map((data) => (
           <div 
             key={data.id} 
-            className="glass-panel p-6 rounded-[2rem] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(10,47,29,0.08)] transition-all duration-300 group flex flex-col justify-between"
+            className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(10,47,29,0.08)] transition-all duration-300 group flex flex-col justify-between"
           >
             <div>
               <div className="flex justify-between items-start mb-4">

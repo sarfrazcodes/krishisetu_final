@@ -21,23 +21,22 @@ export default function VoiceButton() {
 
   // 3. If it's rendering on the server (not mounted yet), return null to match exactly
   if (!mounted) {
-    return null; 
+    return null;
   }
 
   // If the browser doesn't support the Speech API, don't render the button
   if (!isSupported) {
-    return null; 
+    return null;
   }
 
   return (
     <div className="relative flex items-center justify-center">
       <button
         onClick={isListening ? stopListening : startListening}
-        className={`flex items-center justify-center p-4 rounded-full transition-all duration-300 ${
-          isListening
+        className={`flex items-center justify-center p-4 rounded-full transition-all duration-300 ${isListening
             ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.6)] animate-pulse"
             : "bg-gray-900 text-emerald-400 hover:bg-gray-800 hover:text-emerald-300 border border-gray-800 shadow-md hover:shadow-[0_0_15px_rgba(52,211,153,0.2)]"
-        }`}
+          }`}
         title={isListening ? "Stop Voice Assistant" : "Start Voice Assistant"}
       >
         {isListening ? (

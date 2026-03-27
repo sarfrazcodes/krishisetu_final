@@ -1,30 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Search, MapPin, Clock, ShieldCheck, Truck, Store, ArrowRight, ArrowLeft, Leaf, History, CheckCircle2 } from "lucide-react";
-
-// --- SHARED LEDGER DATA (Matches Buyer's Orders) ---
-const tradeHistory = [
-  {
-    id: "ORD-8821",
-    buyer: "Punjab Agro Foods",
-    crop: "Wheat (Lok-1)",
-    quantity: "100 Quintals",
-    price: "₹2,50,000",
-    date: "Mar 20, 2026",
-    status: "In Transit"
-  },
-  {
-    id: "ORD-8815",
-    buyer: "Kisan Cooperative",
-    crop: "Basmati Rice",
-    quantity: "150 Quintals",
-    price: "₹4,50,000",
-    date: "Mar 10, 2026",
-    status: "Delivered"
-  }
-];
 
 // --- POV-DRIVEN MOCK DATA FOR TIMELINE ---
 const traceData = [
@@ -105,6 +83,30 @@ const TraceCard = ({ item, index }: { item: any; index: number }) => {
 export default function TraceabilityPage() {
   const [searchId, setSearchId] = useState("");
   const [activeTimeline, setActiveTimeline] = useState<string | null>(null);
+  const [records, setRecords] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTraceRecords();
+  }, []);
+
+  const fetchTraceRecords = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const res = await fetch(`${API_URL}/traceability`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setRecords(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch traceability records", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen p-4 md:p-8 relative z-10 w-full animate-fade-in pb-24">
@@ -140,36 +142,42 @@ export default function TraceabilityPage() {
       {/* CONDITIONAL RENDER: Ledger vs Timeline */}
       {!activeTimeline ? (
         <div className="space-y-4 max-w-4xl">
-          <h2 className="text-xl font-black text-[#0A2F1D] mb-4">Your Recent Trades</h2>
-          {tradeHistory.map((trade) => (
-            <div key={trade.id} className="glass-panel p-6 rounded-[2rem] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(10,47,29,0.08)] transition-all duration-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#10893E]/10 flex items-center justify-center border border-[#10893E]/20">
-                  <ShieldCheck className="w-6 h-6 text-[#10893E]" />
+          <h2 className="text-xl font-black text-[#0A2F1D] mb-4">Immutable Traceability Logs</h2>
+          {isLoading ? (
+            <p className="text-[#627768] font-bold">Loading secure ledger items...</p>
+          ) : records.length === 0 ? (
+            <p className="text-[#627768] font-bold">No traceability records found.</p>
+          ) : (
+            records.map((trade) => (
+              <div key={trade.id} className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(10,47,29,0.08)] transition-all duration-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#10893E]/10 flex items-center justify-center border border-[#10893E]/20">
+                    <ShieldCheck className="w-6 h-6 text-[#10893E]" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-lg text-[#0A2F1D] flex items-center gap-2">
+                      {trade.id} <CheckCircle2 className="w-4 h-4 text-[#10893E]"/>
+                    </h3>
+                    <p className="text-sm font-bold text-[#627768]">{trade.crop} • Logged on {new Date(trade.date).toLocaleDateString()}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-black text-lg text-[#0A2F1D] flex items-center gap-2">
-                    {trade.id} {trade.status === "Delivered" && <CheckCircle2 className="w-4 h-4 text-[#10893E]"/>}
-                  </h3>
-                  <p className="text-sm font-bold text-[#627768]">{trade.crop} • {trade.quantity}</p>
+                <div className="text-left md:text-right w-full md:w-auto">
+                  <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Origin Node</p>
+                  <p className="font-bold text-[#0A2F1D]">{trade.origin}</p>
                 </div>
+                <div className="text-left md:text-right w-full md:w-auto">
+                  <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Network Status</p>
+                  <p className="text-xl font-black text-[#10893E]">Verified</p>
+                </div>
+                <button 
+                  onClick={() => setActiveTimeline(trade.id)}
+                  className="w-full md:w-auto py-3 px-6 bg-white border border-[#EBE5D9] text-[#0A2F1D] rounded-xl font-bold shadow-sm hover:bg-[#FDF8EE] transition-colors mt-2 md:mt-0"
+                >
+                  View Ledger
+                </button>
               </div>
-              <div className="text-left md:text-right w-full md:w-auto">
-                <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Buyer</p>
-                <p className="font-bold text-[#0A2F1D]">{trade.buyer}</p>
-              </div>
-              <div className="text-left md:text-right w-full md:w-auto">
-                <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Value</p>
-                <p className="text-xl font-black text-[#10893E]">{trade.price}</p>
-              </div>
-              <button 
-                onClick={() => setActiveTimeline(trade.id)}
-                className="w-full md:w-auto py-3 px-6 bg-white border border-[#EBE5D9] text-[#0A2F1D] rounded-xl font-bold shadow-sm hover:bg-[#FDF8EE] transition-colors mt-2 md:mt-0"
-              >
-                View Ledger
-              </button>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       ) : (
         <div className="max-w-5xl mx-auto relative pt-10">

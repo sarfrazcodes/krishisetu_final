@@ -61,7 +61,7 @@ export default function MarketAnalyticsPage() {
         
         <div className="flex space-x-4 items-center">
           <Link href="/buyer-dashboard/notifications">
-            <button className="glass-panel p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 transition-all relative">
+            <button className="bg-white border border-[#E2DFD3] shadow-sm p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 transition-all relative">
               🔔<span className="absolute top-2 right-2 w-2 h-2 bg-[#FBC02D] rounded-full shadow-[0_0_8px_#FBC02D]"></span>
             </button>
           </Link>
@@ -77,7 +77,7 @@ export default function MarketAnalyticsPage() {
             className={`px-6 py-3 rounded-2xl font-bold whitespace-nowrap transition-all duration-300 ${
               selectedCrop === crop 
               ? 'bg-[#0A2F1D] text-[#FDF8EE] shadow-[0_8px_15px_rgba(10,47,29,0.3)] scale-105' 
-              : 'glass-panel text-[#627768] hover:bg-white hover:text-[#0A2F1D] border border-transparent hover:border-[#E2DFD3]'
+              : 'bg-white border border-[#E2DFD3] shadow-sm text-[#627768] hover:bg-white hover:text-[#0A2F1D] border border-transparent hover:border-[#E2DFD3]'
             }`}
           >
             {crop}
@@ -90,7 +90,7 @@ export default function MarketAnalyticsPage() {
         {/* LEFT/MAIN COLUMN: PREDICTIVE CHART */}
         <div className="lg:col-span-2 space-y-8">
           
-          <div className="glass-panel p-6 md:p-8 rounded-[2rem] hover:shadow-[0_15px_30px_rgba(10,47,29,0.05)] transition-all">
+          <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 md:p-8 rounded-[2rem] hover:shadow-[0_15px_30px_rgba(10,47,29,0.05)] transition-all">
             <div className="flex justify-between items-start mb-8">
               <div>
                 <h2 className="text-2xl font-black text-[#0A2F1D] flex items-center gap-2">

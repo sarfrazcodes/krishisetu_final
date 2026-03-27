@@ -19,7 +19,7 @@ export default function MandiPricesPage() {
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .glass-panel {
+        .bg-white border border-[#E2DFD3] shadow-sm {
           background: rgba(255, 255, 255, 0.55);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
@@ -49,7 +49,7 @@ export default function MandiPricesPage() {
       <div className="absolute bottom-[-15%] right-[-5%] w-[700px] h-[700px] bg-[#FBC02D] rounded-full mix-blend-multiply filter blur-[160px] opacity-[0.12] pointer-events-none z-0"></div>
 
       {/* --- FLOATING 3D SIDEBAR (Farmer View) --- */}
-      {/* <aside className={`relative z-20 w-24 lg:w-64 h-[calc(100vh-2rem)] my-4 ml-4 glass-panel rounded-3xl flex flex-col justify-between py-8 transition-all duration-300 ease-out transform ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
+      {/* <aside className={`relative z-20 w-24 lg:w-64 h-[calc(100vh-2rem)] my-4 ml-4 bg-white border border-[#E2DFD3] shadow-sm rounded-3xl flex flex-col justify-between py-8 transition-all duration-300 ease-out transform ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
         <div className="px-0 lg:px-8 flex justify-center lg:justify-start items-center">
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="w-10 h-10 bg-gradient-to-br from-[#0A2F1D] to-[#10893E] rounded-xl flex items-center justify-center shadow-[0_4px_10px_rgba(10,47,29,0.3),inset_0_2px_0_rgba(255,255,255,0.3)] transform group-hover:rotate-12 transition-transform duration-150">
@@ -103,7 +103,7 @@ export default function MandiPricesPage() {
           </div>
           
           <div className="mt-4 md:mt-0 flex space-x-4 items-center">
-            <div className="glass-panel px-4 py-2 rounded-xl flex items-center space-x-2">
+            <div className="bg-white border border-[#E2DFD3] shadow-sm px-4 py-2 rounded-xl flex items-center space-x-2">
               <span className="w-2 h-2 rounded-full bg-[#10893E] animate-pulse shadow-[0_0_5px_#10893E]"></span>
               <span className="text-sm font-bold text-[#0A2F1D]">Data Synced: Just Now</span>
             </div>
@@ -118,7 +118,7 @@ export default function MandiPricesPage() {
             { label: "Top Loser", crop: "Cotton", mandi: "Bathinda", price: "₹6,800", change: "-2.1%", color: "text-red-500", bg: "bg-red-50" },
             { label: "Trending", crop: "Potato", mandi: "Jalandhar", price: "₹1,150", change: "+3.8%", color: "text-[#10893E]", bg: "bg-[#E9F3E8]" },
           ].map((stat, idx) => (
-            <div key={idx} className="glass-panel min-w-[200px] p-4 rounded-2xl flex-shrink-0 group hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+            <div key={idx} className="bg-white border border-[#E2DFD3] shadow-sm min-w-[200px] p-4 rounded-2xl flex-shrink-0 group hover:-translate-y-1 transition-all duration-200 cursor-pointer">
               <p className="text-[10px] font-black text-[#627768] uppercase tracking-widest mb-2">{stat.label}</p>
               <div className="flex justify-between items-end">
                 <div>
@@ -135,7 +135,7 @@ export default function MandiPricesPage() {
         </div>
 
         {/* --- MAIN TERMINAL DATA TABLE --- */}
-        <div className={`flex-1 glass-panel rounded-[2rem] flex flex-col overflow-hidden transition-all duration-300 ease-out delay-200 transform ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className={`flex-1 bg-white border border-[#E2DFD3] shadow-sm rounded-[2rem] flex flex-col overflow-hidden transition-all duration-300 ease-out delay-200 transform ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           
           {/* Table Header Controls */}
           <div className="p-4 md:p-6 border-b border-white/40 flex flex-col md:flex-row justify-between items-center gap-4 bg-white/30 backdrop-blur-md">

@@ -86,7 +86,7 @@ export default function FarmerMarketplacePage() {
       <h2 className="text-2xl font-black text-[#0A2F1D] mb-6">Live Buyer Demands</h2>
 
       {liveDemands.length === 0 ? (
-        <div className="glass-panel p-10 text-center rounded-[2rem]">
+        <div className="bg-white border border-[#E2DFD3] shadow-sm p-10 text-center rounded-[2rem]">
           <p className="text-[#627768] font-bold">Waiting for buyers to send offers...</p>
         </div>
       ) : (
@@ -94,7 +94,7 @@ export default function FarmerMarketplacePage() {
           {liveDemands.map((offer) => (
             <div 
               key={offer.id} 
-              className={`glass-panel p-6 rounded-[2rem] flex flex-col justify-between ${
+              className={`bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] flex flex-col justify-between ${
                 offer.isPremiumBuyer ? "bg-gradient-to-br from-[#14A049] to-[#0A2F1D] text-white" : ""
               }`}
             >

@@ -89,6 +89,14 @@ def predict_price(
 
 
 # ─────────────────────────────────────────────
+# GET /crops/{name}/advisory
+# ─────────────────────────────────────────────
+@router.get("/{name}/advisory")
+def crop_advisory(name: str, mandi: str, temp: float, rain: float, desc: str):
+    from app.services.crop_service import generate_weather_advisory
+    return generate_weather_advisory(name, mandi, temp, rain, desc)
+
+# ─────────────────────────────────────────────
 # GET /crops/test  (dev helper — keep for debugging)
 # ─────────────────────────────────────────────
 @router.get("/test")

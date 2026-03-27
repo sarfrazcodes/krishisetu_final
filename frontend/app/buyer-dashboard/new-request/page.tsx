@@ -5,8 +5,9 @@ import {
   ArrowLeft, Megaphone, MapPin, Calendar, Scale, IndianRupee, Sprout, Building2
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export default function NewRequestPage() {
+export default function NewRequirementPage() {
   const [mounted, setMounted] = useState(false);
   
   // Form State
@@ -15,10 +16,49 @@ export default function NewRequestPage() {
   const [price, setPrice] = useState("2400");
   const [location, setLocation] = useState("Ludhiana, Punjab");
   const [deadline, setDeadline] = useState("Next Friday");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg("");
+    
+    if (!crop || !quantity || !location) {
+      setErrorMsg("Please fill all required fields.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const token = localStorage.getItem("token");
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+    try {
+      const res = await fetch(`${API_URL}/requests`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ crop, quantity, price, location })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Failed to create requirement");
+      }
+
+      router.push("/buyer-dashboard/my-requests");
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.message || "An error occurred");
+      setIsSubmitting(false);
+    }
+  };
 
   if (!mounted) return null;
 
@@ -30,10 +70,10 @@ export default function NewRequestPage() {
         <header className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
           <div className="space-y-2">
             <Link href="/buyer-dashboard/procurement" className="text-[#10893E] font-bold flex items-center gap-2 hover:-translate-x-1 transition-transform">
-              <ArrowLeft className="w-4 h-4" /> Back to Procurement
+              <ArrowLeft className="w-4 h-4" /> Back to Farmer Market
             </Link>
             <h1 className="text-4xl font-black text-[#0A2F1D] flex items-center gap-3">
-              <Megaphone className="w-8 h-8 text-[#FBC02D]" /> Broadcast Demand
+              <Megaphone className="w-8 h-8 text-[#FBC02D]" /> Post New Requirement
             </h1>
             <p className="text-[#627768] font-medium">Create a public request that will be visible to all verified farmers in your region.</p>
           </div>
@@ -43,10 +83,11 @@ export default function NewRequestPage() {
           
           {/* LEFT COLUMN: THE FORM */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="glass-panel p-6 md:p-8 rounded-[2rem] shadow-lg">
-              <h2 className="text-xl font-black text-[#0A2F1D] mb-6">Request Details</h2>
+            <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 md:p-8 rounded-[2rem] shadow-lg">
+              <h2 className="text-xl font-black text-[#0A2F1D] mb-4">Requirement Details</h2>
+              {errorMsg && <div className="mb-4 text-sm font-bold text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{errorMsg}</div>}
               
-              <form className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Crop Selection */}
                 <div>
                   <label className="block text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-2">Commodity Type</label>
@@ -133,11 +174,15 @@ export default function NewRequestPage() {
             </div>
 
             {/* Submit Button */}
-            <Link href="/buyer-dashboard/procurement">
-              <button className="w-full py-5 bg-gradient-to-b from-[#14A049] to-[#10893E] text-white rounded-[1.5rem] font-black text-lg shadow-[0_8px_0_0_#0D7334,0_15px_30px_rgba(16,137,62,0.4)] hover:shadow-[0_4px_0_0_#0D7334,0_15px_30px_rgba(16,137,62,0.5)] hover:translate-y-[4px] active:translate-y-[8px] active:shadow-none transition-all duration-150 flex items-center justify-center gap-2">
-                Broadcast to Farmers 📡
-              </button>
-            </Link>
+            <button 
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className={`w-full py-5 text-white rounded-[1.5rem] font-black text-lg transition-all duration-150 flex items-center justify-center gap-2 ${
+                isSubmitting ? "bg-gray-400 cursor-not-allowed opacity-80" : "bg-gradient-to-b from-[#14A049] to-[#10893E] shadow-[0_8px_0_0_#0D7334,0_15px_30px_rgba(16,137,62,0.4)] hover:shadow-[0_4px_0_0_#0D7334,0_15px_30px_rgba(16,137,62,0.5)] hover:translate-y-[4px] active:translate-y-[8px] active:shadow-none"
+              }`}
+            >
+              {isSubmitting ? "Broadcasting..." : "Broadcast to Farmers 📡"}
+            </button>
           </div>
 
           {/* RIGHT COLUMN: LIVE PREVIEW (What the farmer sees) */}
@@ -147,7 +192,7 @@ export default function NewRequestPage() {
             </h2>
             
             {/* The Farmer's View Card */}
-            <div className="glass-panel p-6 rounded-[2rem] border-t-4 border-t-[#10893E] shadow-[0_20px_40px_rgba(10,47,29,0.1)] opacity-90 scale-95 origin-top relative overflow-hidden pointer-events-none">
+            <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] border-t-4 border-t-[#10893E] shadow-[0_20px_40px_rgba(10,47,29,0.1)] opacity-90 scale-95 origin-top relative overflow-hidden pointer-events-none">
               <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px] z-20"></div> {/* Gives it a "preview" feel */}
               
               <div className="relative z-10">

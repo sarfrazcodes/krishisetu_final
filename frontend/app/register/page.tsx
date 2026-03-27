@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 
 // --- REUSABLE CORNER WHEAT GRAPHIC ---
 const CornerWheat = ({ className }: { className?: string }) => (
@@ -22,23 +24,62 @@ const CornerWheat = ({ className }: { className?: string }) => (
 export default function RegisterPage() {
   const [mounted, setMounted] = useState(false);
   const [role, setRole] = useState<'farmer' | 'buyer'>('farmer');
-  
+
   // --- NEW STATE FOR PASSWORD VISIBILITY ---
   const [showPassword, setShowPassword] = useState(false);
+
+  // --- REGISTRATION STATE ---
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Trigger entrance animations after mount
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone, password, role })
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setSuccessMessage("Registration successful! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      }
+    } catch (err) {
+      setError("Network error. Is the backend running?");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <main 
+    <main
       className="min-h-screen bg-[#FDF8EE] flex flex-col items-center justify-center p-4 relative overflow-hidden selection:bg-[#FBC02D] selection:text-[#0A2F1D]"
-      style={{ fontFamily: "'Manrope', sans-serif" }} 
+      style={{ fontFamily: "'Manrope', sans-serif" }}
     >
-      
+      <Navbar />
       {/* GLOBAL ANIMATIONS & FONTS */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Manrope:wght@500;700;800&display=swap');
 
         @keyframes rolling-shine {
@@ -79,10 +120,9 @@ export default function RegisterPage() {
       <CornerWheat className="absolute bottom-10 right-4 md:right-12 w-24 h-48 md:w-32 md:h-64 text-[#D4C392] opacity-30 pointer-events-none z-0 transform scale-x-[-1]" />
 
       {/* --- REGISTRATION CARD CONTAINER --- */}
-      <div 
-        className={`w-full max-w-lg relative z-10 transition-all duration-1000 ease-out transform ${
-          mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-        }`}
+      <div
+        className={`w-full max-w-lg relative z-10 transition-all duration-1000 ease-out transform ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+          }`}
       >
         {/* Logo / Back to Home Link */}
         <div className="text-center mb-6 mt-8">
@@ -96,8 +136,11 @@ export default function RegisterPage() {
         </div>
 
         {/* 3D Frosted Glass Form Card */}
-        <form className="bg-white/80 backdrop-blur-xl p-8 md:p-10 rounded-[2rem] border border-[#E2DFD3] shadow-[0_20px_40px_rgba(10,47,29,0.08)] hover:shadow-[0_30px_60px_rgba(10,47,29,0.12)] transition-shadow duration-500 mb-8">
-          
+        <form onSubmit={handleRegister} className="bg-white/80 backdrop-blur-xl p-8 md:p-10 rounded-[2rem] border border-[#E2DFD3] shadow-[0_20px_40px_rgba(10,47,29,0.08)] hover:shadow-[0_30px_60px_rgba(10,47,29,0.12)] transition-shadow duration-500 mb-8">
+
+          {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-bold shadow-sm">{error}</div>}
+          {successMessage && <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-bold shadow-sm">{successMessage}</div>}
+
           {/* Role Selection */}
           <div className="mb-6">
             <label className="block text-sm font-bold text-[#0A2F1D] mb-3 pl-1">I want to...</label>
@@ -105,22 +148,20 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setRole('farmer')}
-                className={`py-3 px-4 rounded-xl border-2 font-bold transition-all duration-200 flex items-center justify-center ${
-                  role === 'farmer' 
-                  ? 'border-[#10893E] bg-[#E9F3E8] text-[#10893E] shadow-sm border-b-[4px]' 
-                  : 'border-[#E2DFD3] bg-[#FDF8EE] text-[#627768] hover:border-[#BDE0B8] hover:-translate-y-[2px] border-b-[4px]'
-                }`}
+                className={`py-3 px-4 rounded-xl border-2 font-bold transition-all duration-200 flex items-center justify-center ${role === 'farmer'
+                    ? 'border-[#10893E] bg-[#E9F3E8] text-[#10893E] shadow-sm border-b-[4px]'
+                    : 'border-[#E2DFD3] bg-[#FDF8EE] text-[#627768] hover:border-[#BDE0B8] hover:-translate-y-[2px] border-b-[4px]'
+                  }`}
               >
                 <span className="mr-2 text-xl">🌾</span> Sell Crops
               </button>
               <button
                 type="button"
                 onClick={() => setRole('buyer')}
-                className={`py-3 px-4 rounded-xl border-2 font-bold transition-all duration-200 flex items-center justify-center ${
-                  role === 'buyer' 
-                  ? 'border-[#FBC02D] bg-[#FFF9E6] text-[#D49800] shadow-sm border-b-[4px]' 
-                  : 'border-[#E2DFD3] bg-[#FDF8EE] text-[#627768] hover:border-[#FDE08B] hover:-translate-y-[2px] border-b-[4px]'
-                }`}
+                className={`py-3 px-4 rounded-xl border-2 font-bold transition-all duration-200 flex items-center justify-center ${role === 'buyer'
+                    ? 'border-[#FBC02D] bg-[#FFF9E6] text-[#D49800] shadow-sm border-b-[4px]'
+                    : 'border-[#E2DFD3] bg-[#FDF8EE] text-[#627768] hover:border-[#FDE08B] hover:-translate-y-[2px] border-b-[4px]'
+                  }`}
               >
                 <span className="mr-2 text-xl">🤝</span> Buy Crops
               </button>
@@ -129,10 +170,12 @@ export default function RegisterPage() {
 
           <div className="mb-6">
             <label htmlFor="name" className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Full Name</label>
-            <input 
+            <input
               id="name"
-              type="text" 
-              placeholder="e.g. Harleen Kaur Gill" 
+              type="text"
+              placeholder="e.g. Harleen Kaur Gill"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full px-5 py-4 bg-[#FDF8EE] rounded-xl border border-[#E2DFD3] text-[#0A2F1D] text-lg font-medium placeholder-[#8A9A90] focus:outline-none focus:ring-2 focus:ring-[#10893E] focus:border-transparent transition-all shadow-inner"
               required
             />
@@ -140,10 +183,12 @@ export default function RegisterPage() {
 
           <div className="mb-6">
             <label htmlFor="phone" className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Mobile Number</label>
-            <input 
+            <input
               id="phone"
-              type="tel" 
-              placeholder="+91 98765 43210" 
+              type="tel"
+              placeholder="+91 98765 43210"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="w-full px-5 py-4 bg-[#FDF8EE] rounded-xl border border-[#E2DFD3] text-[#0A2F1D] text-lg font-medium placeholder-[#8A9A90] focus:outline-none focus:ring-2 focus:ring-[#10893E] focus:border-transparent transition-all shadow-inner"
               required
             />
@@ -153,10 +198,12 @@ export default function RegisterPage() {
             <label htmlFor="password" className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Create Password</label>
             {/* WRAPPED INPUT WITH RELATIVE CONTAINER FOR THE BUTTON */}
             <div className="relative">
-              <input 
+              <input
                 id="password"
                 type={showPassword ? "text" : "password"} // Dynamic type based on state
-                placeholder="••••••••" 
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-5 py-4 pr-14 bg-[#FDF8EE] rounded-xl border border-[#E2DFD3] text-[#0A2F1D] text-lg font-medium placeholder-[#8A9A90] focus:outline-none focus:ring-2 focus:ring-[#10893E] focus:border-transparent transition-all shadow-inner"
                 required
               />
@@ -183,13 +230,14 @@ export default function RegisterPage() {
           </div>
 
           {/* 3D Floating Submit Button */}
-          <button 
-            type="submit" 
-            className="w-full group relative overflow-hidden px-10 py-5 bg-gradient-to-b from-[#14A049] to-[#10893E] text-white text-xl font-bold rounded-2xl shadow-[0_8px_0_0_#0D7334,0_15px_20px_rgba(16,137,62,0.4)] hover:shadow-[0_4px_0_0_#0D7334,0_20px_40px_rgba(16,137,62,0.6)] transform hover:-translate-y-1 hover:scale-[1.02] active:translate-y-[4px] active:shadow-[0_0px_0_0_#0D7334,0_10px_10px_rgba(16,137,62,0.4)] transition-all duration-300 mb-6"
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full group relative overflow-hidden px-10 py-5 bg-gradient-to-b from-[#14A049] to-[#10893E] text-white text-xl font-bold rounded-2xl shadow-[0_8px_0_0_#0D7334,0_15px_20px_rgba(16,137,62,0.4)] hover:shadow-[0_4px_0_0_#0D7334,0_20px_40px_rgba(16,137,62,0.6)] transform hover:-translate-y-1 hover:scale-[1.02] active:translate-y-[4px] active:shadow-[0_0px_0_0_#0D7334,0_10px_10px_rgba(16,137,62,0.4)] transition-all duration-300 mb-6 disabled:opacity-50"
           >
             {/* The Glass Shine Sweep */}
             <span className="absolute inset-0 w-full h-full -translate-x-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-[150%] transition-transform duration-1000 ease-out z-0"></span>
-            
+
             <span className="relative z-10 flex items-center justify-center">
               Create Account
             </span>
