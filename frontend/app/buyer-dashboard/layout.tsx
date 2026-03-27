@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function FarmerDashboardLayout({
+export default function BuyerDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -23,14 +23,14 @@ export default function FarmerDashboardLayout({
     setIsListening(!isListening);
   };
 
+  // 🛒 BUYER-SPECIFIC NAVIGATION LINKS
   const navLinks = [
-    { name: "Dashboard", icon: "📊", link: "/farmer-dashboard" },
-    { name: "Marketplace", icon: "🤝", link: "/farmer-dashboard/marketplace" },
-    { name: "AI Advisor", icon: "🤖", link: "/farmer-dashboard/advisor" },
-    { name: "Price Forecast", icon: "🔮", link: "/farmer-dashboard/price-prediction" },
-    { name: "Calculator", icon: "🧮", link: "/farmer-dashboard/calculator" },
-    { name: "Mandi Prices", icon: "📈", link: "/farmer-dashboard/mandi-prices" },
-    { name: "Traceability", icon: "🌱", link: "/farmer-dashboard/traceability" },
+    { name: "Overview", icon: "📊", link: "/buyer-dashboard" },
+    { name: "Procurement", icon: "🌾", link: "/buyer-dashboard/procurement" },
+    { name: "Active Orders", icon: "🚚", link: "/buyer-dashboard/orders" },
+    { name: "Market Analytics", icon: "📈", link: "/buyer-dashboard/analytics" },
+    { name: "Mandi Rates", icon: "⚖️", link: "/buyer-dashboard/mandi-prices" },
+    { name: "Farmer Network", icon: "🤝", link: "/buyer-dashboard/network" },
   ];
 
   return (
@@ -71,18 +71,17 @@ export default function FarmerDashboardLayout({
       {/* --- FLOATING 3D SIDEBAR --- */}
       <aside className={`relative z-20 w-24 lg:w-64 h-[calc(100vh-2rem)] my-4 ml-4 glass-panel rounded-3xl flex flex-col justify-between py-8 transition-all duration-300 ease-out transform ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
         
-       {/* BRANDING SECTION */}
+        {/* BRANDING SECTION */}
         <div className="px-0 lg:px-6 flex justify-center lg:justify-start items-center">
           <Link href="/" className="flex items-center space-x-3 group">
-            
-            {/* CLEAN LOGO CONTAINER - No background, no borders */}
-            <div className="relative w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+            {/* CIRCULAR 3D LOGO CONTAINER */}
+            <div className="relative w-11 h-11 bg-white/60 backdrop-blur-md rounded-full border border-white/80 shadow-[0_4px_10px_rgba(10,47,29,0.1),inset_0_1px_0_rgba(255,255,255,0.5)] flex items-center justify-center p-1.5 group-hover:rotate-6 group-hover:scale-110 transition-all duration-200">
               <Image 
                 src="/logo.png" 
                 alt="KrishiSetu Logo" 
-                width={48} 
-                height={48}
-                className="object-contain drop-shadow-md rounded-full" 
+                width={32} 
+                height={32}
+                className="object-contain drop-shadow-sm rounded-full"
               />
             </div>
 
@@ -91,9 +90,10 @@ export default function FarmerDashboardLayout({
             </span>
           </Link>
         </div>
+
         <nav className="flex-1 mt-12 px-4 space-y-3">
           {navLinks.map((nav, idx) => {
-            const isActive = pathname === nav.link;
+            const isActive = pathname === nav.link || (nav.link !== '/buyer-dashboard' && pathname?.startsWith(nav.link));
 
             return (
               <Link key={idx} href={nav.link} className={`flex items-center justify-center lg:justify-start space-x-4 px-4 py-4 rounded-2xl transition-all duration-150 font-bold ${
@@ -127,22 +127,24 @@ export default function FarmerDashboardLayout({
               </svg>
             </div>
             <span className="hidden lg:block font-black text-sm">
-              {isListening ? "Listening..." : "Voice Assistant"}
+              {isListening ? "Listening..." : "Voice Command"}
             </span>
           </button>
 
-          <Link href="/farmer-dashboard/profile" className="flex items-center justify-center lg:justify-start space-x-3 p-2 rounded-2xl hover:bg-white/80 transition-all duration-150 border border-transparent hover:border-[#E2DFD3] hover:shadow-[0_5px_15px_rgba(10,47,29,0.08)] hover:-translate-y-1 group">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] flex items-center justify-center text-[#0A2F1D] font-black border-2 border-white shadow-[0_4px_8px_rgba(251,192,45,0.4)] group-hover:scale-110 transition-transform duration-150">
-              HS
+          {/* BUYER PROFILE CARD */}
+          <Link href="/buyer-dashboard/profile" className="flex items-center justify-center lg:justify-start space-x-3 p-2 rounded-2xl hover:bg-white/80 transition-all duration-150 border border-transparent hover:border-[#E2DFD3] hover:shadow-[0_5px_15px_rgba(10,47,29,0.08)] hover:-translate-y-1 group">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#10893E] to-[#0A2F1D] flex items-center justify-center text-white font-black border-2 border-white shadow-[0_4px_8px_rgba(16,137,62,0.4)] group-hover:scale-110 transition-transform duration-150">
+              PA
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-sm font-bold text-[#0A2F1D] leading-tight">Harpreet S.</p>
-              <p className="text-xs font-medium text-[#627768]">Verified Farmer</p>
+              <p className="text-sm font-bold text-[#0A2F1D] leading-tight">Punjab Agro</p>
+              <p className="text-[10px] font-black tracking-wider text-[#10893E] uppercase mt-0.5">✓ Verified Buyer</p>
             </div>
           </Link>
         </div>
       </aside>
 
+      {/* --- RIGHT SIDE CONTENT AREA --- */}
       <div className="flex-1 h-full overflow-y-auto hide-scrollbar relative z-10">
         {children}
       </div>
