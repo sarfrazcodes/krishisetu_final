@@ -233,8 +233,8 @@ export default function HomePage() {
         </div>
       </motion.div>
 
-      {/* HERO SECTION */}
-      <section className="relative min-h-[100vh] flex flex-col items-center justify-center text-center px-4 pt-32 pb-32 perspective-[1200px] overflow-hidden">
+      {/* HERO SECTION — FIX: use min-h-screen with flex + justify-center, remove fixed pt/pb, remove -mt-20 */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
         
         <motion.div style={{ y: yBg }} className="absolute inset-0 w-full h-full z-0 pointer-events-none">
           <div className="absolute top-[15%] left-[-5%] w-[500px] h-[500px] bg-[#10893E] rounded-full mix-blend-multiply filter blur-[120px] opacity-10 animate-pulse"></div>
@@ -245,7 +245,7 @@ export default function HomePage() {
             transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
             src="/logo.png" 
             alt="Watermark" 
-            className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[550px] md:h-[550px] opacity-[0.15] pointer-events-none" 
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[550px] md:h-[550px] opacity-[0.15] pointer-events-none" 
           />
         </motion.div>
 
@@ -267,7 +267,7 @@ export default function HomePage() {
           onMouseMove={handleMouseMove} 
           onMouseLeave={handleMouseLeave} 
           style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-          className="relative z-10 flex flex-col items-center w-full max-w-5xl cursor-default py-10 -mt-20"
+          className="relative z-10 flex flex-col items-center w-full max-w-5xl cursor-default py-10"
         >
           <div style={{ transform: "translateZ(60px)" }}>
             <motion.h1 
