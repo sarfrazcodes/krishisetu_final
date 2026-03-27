@@ -295,7 +295,7 @@ export default function HomePage() {
               <span className="relative z-10 flex items-center justify-center">Start Growing Free <span className="ml-2 inline-block transform group-hover:translate-x-1.5 transition-transform">→</span></span>
             </Link>
 
-            <Link href="/marketplace" className="group relative overflow-hidden px-8 py-4 bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] text-[#0A2F1D] text-base font-black rounded-2xl shadow-[0_12px_25px_rgba(251,192,45,0.3)] hover:shadow-[0_20px_40px_rgba(251,192,45,0.5)] transform hover:-translate-y-1 transition-all duration-300 border border-[#F5B921]/50">
+            <Link href="/farmer-dashboard/marketplace" className="group relative overflow-hidden px-8 py-4 bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] text-[#0A2F1D] text-base font-black rounded-2xl shadow-[0_12px_25px_rgba(251,192,45,0.3)] hover:shadow-[0_20px_40px_rgba(251,192,45,0.5)] transform hover:-translate-y-1 transition-all duration-300 border border-[#F5B921]/50">
               <span className="absolute inset-0 w-full h-full -translate-x-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/50 to-transparent group-hover:translate-x-[150%] transition-transform duration-700 ease-out z-0"></span>
               <span className="relative z-10 flex items-center justify-center">Enter Marketplace <span className="ml-2 inline-block transform group-hover:scale-125 transition-transform">🌾</span></span>
             </Link>
