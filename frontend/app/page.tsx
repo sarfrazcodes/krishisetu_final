@@ -233,7 +233,7 @@ export default function HomePage() {
         </div>
       </motion.div>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION — FIX: use min-h-screen with flex + justify-center, remove fixed pt/pb, remove -mt-20 */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
         
         <motion.div style={{ y: yBg }} className="absolute inset-0 w-full h-full z-0 pointer-events-none">
@@ -261,14 +261,6 @@ export default function HomePage() {
               style={{ left: wheat.left, height: wheat.height, width: "auto" }}
             />
           ))}
-        </div>
-
-        {/* --- SMOOTH BLEND EFFECT AT INTERSECTION --- */}
-        <div className="absolute bottom-0 left-0 w-full h-48 z-10 pointer-events-none flex flex-col justify-end">
-          {/* Progressive blur mask (blurs more as it gets closer to the bottom) */}
-          <div className="absolute inset-0 backdrop-blur-[6px] [mask-image:linear-gradient(to_top,black_0%,transparent_100%)]"></div>
-          {/* Gradient fade to match the #FDF8EE background of the stats section */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#FDF8EE] via-[#FDF8EE]/60 to-transparent"></div>
         </div>
 
         <motion.div 
@@ -303,7 +295,7 @@ export default function HomePage() {
               <span className="relative z-10 flex items-center justify-center">Start Growing Free <span className="ml-2 inline-block transform group-hover:translate-x-1.5 transition-transform">→</span></span>
             </Link>
 
-            <Link href="/farmer-dashboard/marketplace" className="group relative overflow-hidden px-8 py-4 bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] text-[#0A2F1D] text-base font-black rounded-2xl shadow-[0_12px_25px_rgba(251,192,45,0.3)] hover:shadow-[0_20px_40px_rgba(251,192,45,0.5)] transform hover:-translate-y-1 transition-all duration-300 border border-[#F5B921]/50">
+            <Link href="/user_explore/commodities" className="group relative overflow-hidden px-8 py-4 bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] text-[#0A2F1D] text-base font-black rounded-2xl shadow-[0_12px_25px_rgba(251,192,45,0.3)] hover:shadow-[0_20px_40px_rgba(251,192,45,0.5)] transform hover:-translate-y-1 transition-all duration-300 border border-[#F5B921]/50">
               <span className="absolute inset-0 w-full h-full -translate-x-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/50 to-transparent group-hover:translate-x-[150%] transition-transform duration-700 ease-out z-0"></span>
               <span className="relative z-10 flex items-center justify-center">Enter Marketplace <span className="ml-2 inline-block transform group-hover:scale-125 transition-transform">🌾</span></span>
             </Link>
@@ -311,7 +303,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* STATS SECTION */}
+      {/* STATS SECTION - Now fading smoothly from the Hero section! No more harsh line. */}
       <section className="py-24 bg-gradient-to-b from-[#FDF8EE] to-[#F5F0E1] relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">

@@ -65,8 +65,8 @@ export default function Navbar() {
 
           {/* Navigation links */}
           <div className="hidden md:flex items-center gap-4">
-            <NavLink href="/mandi-prices">Explore Mandi</NavLink>
-            <NavLink href="/app">Dashboard</NavLink>
+            <NavLink href="/">Home</NavLink>
+            <NavLink href="/user_explore/commodities">Explore Mandi</NavLink>
             <NavLink href="/marketplace">Market</NavLink>
           </div>
         </div>
