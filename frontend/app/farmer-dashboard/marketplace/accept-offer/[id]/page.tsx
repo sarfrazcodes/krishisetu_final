@@ -1,179 +1,171 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Search, MapPin, Building2, CheckCircle2 } from "lucide-react";
 
-export default function AcceptOfferPage({ params }: { params: { id: string } }) {
+// The structure of our shared offer
+interface BuyerOffer {
+  id: string;
+  buyerName: string;
+  isPremiumBuyer: boolean;
+  distance: string;
+  crop: string;
+  quantity: string;
+  price: string;
+  status: string;
+}
+
+export default function FarmerMarketplacePage() {
   const [mounted, setMounted] = useState(false);
+  const [liveDemands, setLiveDemands] = useState<BuyerOffer[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    
+    // --- LOAD OFFERS FROM MEMORY ---
+    const loadOffers = () => {
+      const savedOffers = JSON.parse(localStorage.getItem("krishisetu_offers") || "[]");
+      // Only show offers that haven't been accepted yet
+      const pendingOffers = savedOffers.filter((o: BuyerOffer) => o.status === "Pending");
+      
+      // If no offers exist yet, give them some dummy data so the page isn't empty!
+      if (pendingOffers.length === 0) {
+        setLiveDemands([
+          {
+            id: "MOCK-1", buyerName: "North India Mills", isPremiumBuyer: true, distance: "45 km",
+            crop: "Mustard Seed", quantity: "50 Quintals", price: "₹6,050", status: "Pending"
+          }
+        ]);
+      } else {
+        // Reverse it so the newest offers show up first!
+        setLiveDemands(pendingOffers.reverse());
+      }
+    };
+
+    loadOffers();
+    
+    // Auto-refresh every 2 seconds to check for new buyer offers
+    const interval = setInterval(loadOffers, 2000);
+    return () => clearInterval(interval);
+
   }, []);
 
+  // --- ACCEPT OFFER LOGIC ---
+  const handleAcceptOffer = (offerId: string) => {
+    // 1. Get all offers
+    const savedOffers = JSON.parse(localStorage.getItem("krishisetu_offers") || "[]");
+    
+    // 2. Change the status of the accepted one
+    const updatedOffers = savedOffers.map((o: BuyerOffer) => {
+      if (o.id === offerId) {
+        return { ...o, status: "Accepted" };
+      }
+      return o;
+    });
+    
+    // 3. Save it back
+    localStorage.setItem("krishisetu_offers", JSON.stringify(updatedOffers));
+    
+    // 4. Remove it from the current view
+    setLiveDemands((prev) => prev.filter(o => o.id !== offerId));
+    
+    alert(`Offer Accepted! This has been moved to your Active Orders.`);
+  };
+
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen p-4 md:p-10 relative overflow-hidden">
-      {/* BACKGROUND ELEMENTS FOR DEPTH */}
-      <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#10893E]/5 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-[#FBC02D]/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <main className="p-4 md:p-8 relative z-10 w-full">
+      <header className="mb-10">
+        <h1 className="text-3xl md:text-4xl font-black text-[#0A2F1D] mb-1">Direct Marketplace</h1>
+        <p className="text-[#627768] font-medium">Connect with verified buyers and negotiate better prices.</p>
+      </header>
 
-      {/* HEADER SECTION */}
-      <div className={`max-w-6xl mx-auto transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-        <Link 
-          href="/farmer-dashboard/marketplace"
-          className="group text-[#10893E] font-bold flex items-center gap-2 mb-6 hover:translate-x-[-4px] transition-transform"
-        >
-          <span className="text-xl">←</span> Back to Marketplace
-        </Link>
+      {/* --- LIVE BUYER DEMANDS --- */}
+      <h2 className="text-2xl font-black text-[#0A2F1D] mb-6">Live Buyer Demands</h2>
 
-        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
-          <div>
-            <h1 className="text-4xl font-black text-[#0A2F1D]">Confirm & Seal Deal</h1>
-            <p className="text-[#627768] font-medium mt-1">You are generating a legally binding smart-contract for your harvest.</p>
-          </div>
-          {/* Progress Indicator */}
-          <div className="flex items-center gap-3 bg-white/40 backdrop-blur-md p-2 rounded-2xl border border-white/60">
-            <div className="flex items-center gap-2 px-3 py-1 bg-[#10893E] text-white rounded-lg text-sm font-bold">
-              <span>1</span> Review
-            </div>
-            <div className="w-8 h-[2px] bg-[#0A2F1D]/10"></div>
-            <div className="flex items-center gap-2 px-3 py-1 bg-[#0A2F1D]/5 text-[#0A2F1D]/40 rounded-lg text-sm font-bold">
-              <span>2</span> Sign
-            </div>
-          </div>
+      {liveDemands.length === 0 ? (
+        <div className="glass-panel p-10 text-center rounded-[2rem]">
+          <p className="text-[#627768] font-bold">Waiting for buyers to send offers...</p>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* LEFT COLUMN: THE OFFER CARD */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="glass-panel rounded-[2.5rem] p-8 md:p-10 shadow-[0_20px_50px_rgba(10,47,29,0.05)] relative overflow-hidden group">
-              {/* Decorative accent */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FBC02D]/20 to-transparent rounded-bl-[5rem]"></div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
-                {/* Offer Column */}
-                <div className="space-y-8">
-                  <section>
-                    <h2 className="text-[10px] font-black tracking-[0.2em] text-[#10893E] uppercase mb-4">Offer Breakdown</h2>
-                    <div className="bg-white/60 rounded-3xl p-6 border border-white/80 shadow-inner group-hover:bg-white/80 transition-colors">
-                      <div className="flex items-center gap-4 mb-4">
-                        <span className="text-4xl bg-white p-3 rounded-2xl shadow-sm">🌾</span>
-                        <div>
-                          <p className="text-2xl font-black text-[#0A2F1D]">Wheat (Lok-1)</p>
-                          <p className="text-sm font-bold text-[#627768]">Grade A • Verified Quality</p>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center pt-4 border-t border-[#0A2F1D]/5">
-                        <p className="font-bold text-[#0A2F1D]">Unit Price</p>
-                        <p className="text-2xl font-black text-[#10893E]">₹2,500 <span className="text-xs text-[#627768]">/ Quintal</span></p>
-                      </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {liveDemands.map((offer) => (
+            <div 
+              key={offer.id} 
+              className={`glass-panel p-6 rounded-[2rem] flex flex-col justify-between ${
+                offer.isPremiumBuyer ? "bg-gradient-to-br from-[#14A049] to-[#0A2F1D] text-white" : ""
+              }`}
+            >
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm border ${
+                      offer.isPremiumBuyer ? "bg-white/10 border-white/20 text-white" : "bg-white/80 border-white text-[#0A2F1D]"
+                    }`}>
+                      <Building2 className="w-5 h-5" />
                     </div>
-                  </section>
-
-                  <section>
-                    <h2 className="text-[10px] font-black tracking-[0.2em] text-[#10893E] uppercase mb-4">Buyer Verification</h2>
-                    <div className="bg-white/60 rounded-3xl p-6 border border-white/80 shadow-inner group-hover:bg-white/80 transition-colors">
-                      <p className="text-xl font-black text-[#0A2F1D]">Punjab Agro Foods</p>
-                      <div className="grid grid-cols-2 gap-4 mt-3">
-                        <div className="text-xs font-bold text-[#627768]">
-                          <p>Manager</p>
-                          <p className="text-[#0A2F1D]">Ramesh Kumar</p>
-                        </div>
-                        <div className="text-xs font-bold text-[#627768]">
-                          <p>Phone</p>
-                          <p className="text-[#0A2F1D]">+91 98765 43210</p>
-                        </div>
-                      </div>
-                      <p className="text-xs font-bold text-[#10893E] mt-4 flex items-center gap-1">
-                        📍 12 km • Ludhiana Central Mandi
+                    <div>
+                      <h3 className={`font-bold leading-tight ${offer.isPremiumBuyer ? "text-white" : "text-[#0A2F1D]"}`}>
+                        {offer.buyerName}
+                      </h3>
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-sm uppercase tracking-wide border ${
+                        offer.isPremiumBuyer 
+                        ? "bg-[#FBC02D] text-[#0A2F1D] border-transparent" 
+                        : "bg-[#E9F3E8] text-[#10893E] border-[#CDE0C3]"
+                      }`}>
+                        {offer.isPremiumBuyer ? "⭐ Premium Buyer" : "✓ Verified Buyer"}
+                      </span>
+                    </div>
+                  </div>
+                  <span className={`text-xs font-bold px-2 py-1 rounded-md shadow-sm flex items-center gap-1 ${
+                    offer.isPremiumBuyer ? "bg-black/20 text-white" : "bg-white/80 text-[#627768]"
+                  }`}>
+                    <MapPin className="w-3 h-3"/> {offer.distance}
+                  </span>
+                </div>
+                
+                <div className={`my-5 p-4 rounded-2xl shadow-inner ${
+                  offer.isPremiumBuyer ? "bg-black/20 border border-white/10" : "bg-white/60 border border-white/80"
+                }`}>
+                  <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${
+                    offer.isPremiumBuyer ? "text-green-200" : "text-[#8A9A90]"
+                  }`}>Looking For</p>
+                  
+                  <span className={`text-xl font-black ${offer.isPremiumBuyer ? "text-white" : "text-[#0A2F1D]"}`}>
+                    {offer.crop}
+                  </span>
+                  
+                  <div className="mt-3 flex justify-between items-end">
+                    <div>
+                      <p className={`text-xs font-medium ${offer.isPremiumBuyer ? "text-green-200" : "text-[#627768]"}`}>Quantity</p>
+                      <p className={`font-bold ${offer.isPremiumBuyer ? "text-white" : "text-[#0A2F1D]"}`}>{offer.quantity}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-xs font-medium ${offer.isPremiumBuyer ? "text-green-200" : "text-[#627768]"}`}>Offered Price</p>
+                      <p className={`text-2xl font-black ${offer.isPremiumBuyer ? "text-[#FBC02D]" : "text-[#10893E]"}`}>
+                        {offer.price}<span className="text-sm">/q</span>
                       </p>
                     </div>
-                  </section>
-                </div>
-
-                {/* Commitment Column */}
-                <div className="flex flex-col justify-between">
-                  <section className="space-y-6">
-                    <h2 className="text-[10px] font-black tracking-[0.2em] text-[#10893E] uppercase mb-4">Your Commitment</h2>
-                    
-                    <div className="space-y-4">
-                      <div className="group/input">
-                        <label className="block text-xs font-black text-[#0A2F1D] mb-2 ml-1 uppercase opacity-60">Supply Quantity (q)</label>
-                        <input 
-                          type="number" 
-                          defaultValue="100"
-                          className="w-full px-6 py-4 rounded-2xl bg-white/80 border border-white focus:outline-none focus:ring-4 focus:ring-[#10893E]/10 text-[#0A2F1D] font-bold text-lg shadow-inner transition-all"
-                        />
-                      </div>
-
-                      <div className="group/input">
-                        <label className="block text-xs font-black text-[#0A2F1D] mb-2 ml-1 uppercase opacity-60">Delivery Date</label>
-                        <input 
-                          type="date" 
-                          className="w-full px-6 py-4 rounded-2xl bg-white/80 border border-white focus:outline-none focus:ring-4 focus:ring-[#10893E]/10 text-[#0A2F1D] font-bold shadow-inner transition-all"
-                        />
-                      </div>
-                    </div>
-                  </section>
-
-                  <div className="mt-10 pt-6 border-t-2 border-dashed border-[#0A2F1D]/10">
-                    <div className="flex justify-between items-center mb-6">
-                      <span className="font-bold text-[#627768]">Estimated Total:</span>
-                      <span className="text-4xl font-black text-[#0A2F1D] drop-shadow-sm">₹2,50,000</span>
-                    </div>
-                    <button className="w-full bg-[#10893E] hover:bg-[#0A2F1D] text-white font-black py-5 rounded-2xl shadow-[0_10px_30px_rgba(16,137,62,0.3)] hover:shadow-[0_15px_40px_rgba(10,47,29,0.4)] transition-all duration-300 active:scale-[0.98] text-lg flex items-center justify-center gap-3 group">
-                      Confirm & Generate Contract
-                      <span className="group-hover:translate-x-1 transition-transform">→</span>
-                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* RIGHT COLUMN: SIDEBAR WIDGETS */}
-          <div className="space-y-6">
-            {/* Trust Badge Widget */}
-            <div className="glass-panel p-6 rounded-[2rem] border-l-4 border-l-[#FBC02D]">
-              <div className="text-3xl mb-3">🛡️</div>
-              <h3 className="font-bold text-[#0A2F1D] mb-2 text-lg">KrishiSetu Guarantee</h3>
-              <p className="text-sm text-[#627768] leading-relaxed">
-                Your payment is secured in escrow. Funds are released immediately after the buyer verifies the quality at the Mandi.
-              </p>
-            </div>
-
-            {/* Inventory Shortcut Widget */}
-            <div className="glass-panel p-6 rounded-[2rem] bg-gradient-to-br from-white/40 to-[#E9F3E8]/40">
-              <h3 className="font-bold text-[#0A2F1D] mb-4 text-sm uppercase tracking-wider">Your Inventory Status</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center text-sm font-bold">
-                  <span className="text-[#627768]">Current Stock:</span>
-                  <span className="text-[#0A2F1D]">450 q</span>
-                </div>
-                <div className="w-full h-2 bg-white/50 rounded-full overflow-hidden shadow-inner">
-                  <div className="h-full bg-[#10893E] w-[22%]" />
-                </div>
-                <p className="text-[10px] text-[#627768] font-medium italic">
-                  *This deal will utilize 22% of your available Wheat stock.
-                </p>
-              </div>
-            </div>
-
-            {/* Need Help Widget */}
-            <div className="p-6 rounded-[2rem] bg-[#0A2F1D] text-white shadow-xl relative overflow-hidden group cursor-pointer transition-transform hover:scale-[1.02]">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-              <h3 className="font-bold mb-2 relative z-10 flex items-center gap-2">
-                <span className="animate-pulse">🎧</span> Live Support
-              </h3>
-              <p className="text-xs text-white/70 relative z-10 mb-4">Confused about the contract terms? Talk to our market expert.</p>
-              <button className="text-xs font-black text-[#FBC02D] uppercase tracking-widest relative z-10 group-hover:underline">
-                Call Advisor Now
+              <button 
+                onClick={() => handleAcceptOffer(offer.id)}
+                className={`w-full py-3 rounded-xl font-black transition-all border ${
+                  offer.isPremiumBuyer
+                  ? "bg-white text-[#0A2F1D] shadow-[0_6px_0_0_#CDE0C3] hover:translate-y-[4px] hover:shadow-[0_2px_0_0_#CDE0C3] border-transparent"
+                  : "bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] text-[#0A2F1D] shadow-[0_6px_0_0_#D49800] hover:translate-y-[4px] hover:shadow-[0_2px_0_0_#D49800] border-[#F5B921]"
+                }`}
+              >
+                Accept Offer
               </button>
             </div>
-          </div>
-
+          ))}
         </div>
-      </div>
-    </div>
+      )}
+    </main>
   );
 }
