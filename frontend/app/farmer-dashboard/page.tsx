@@ -30,9 +30,20 @@ export default function FarmerDashboardOverview() {
           <button className="glass-panel p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(10,47,29,0.1)] transition-all duration-150">
             🔍
           </button>
-          <button className="glass-panel p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(10,47,29,0.1)] transition-all duration-150 relative">
-            🔔<span className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#FBC02D] rounded-full shadow-[0_0_8px_#FBC02D]"></span>
-          </button>
+          <Link href="/farmer-dashboard/notifications">
+  <button className="glass-panel p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(10,47,29,0.1)] transition-all duration-150 relative group">
+    {/* The Bell Icon */}
+    <span className="group-hover:rotate-12 transition-transform inline-block">🔔</span>
+    
+    {/* The Notification Dot (Gold #FBC02D) */}
+    <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#FBC02D] rounded-full shadow-[0_0_8px_#FBC02D] animate-pulse"></span>
+    
+    {/* Optional: Tooltip on hover */}
+    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-[#0A2F1D] text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+      View Alerts
+    </span>
+  </button>
+</Link>
           
           {/* LINK TO THE NEW LISTING PAGE WE BUILT! */}
           <Link href="/farmer-dashboard/new-listing">

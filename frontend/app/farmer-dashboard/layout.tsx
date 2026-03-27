@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // <-- Added this to track active pages
 import { useEffect, useState } from "react";
 
 export default function FarmerDashboardLayout({
@@ -9,6 +10,7 @@ export default function FarmerDashboardLayout({
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname(); // <-- Gets the current URL path
   
   // State for the global voice assistant
   const [isListening, setIsListening] = useState(false);
@@ -21,6 +23,17 @@ export default function FarmerDashboardLayout({
     setIsListening(!isListening);
     // You can connect your voice AI logic here later!
   };
+
+  // Navigation Links Array
+  const navLinks = [
+    { name: "Dashboard", icon: "📊", link: "/farmer-dashboard" },
+    { name: "Marketplace", icon: "🤝", link: "/farmer-dashboard/marketplace" },
+    { name: "AI Advisor", icon: "🤖", link: "/farmer-dashboard/advisor" },
+    { name: "Price Forecast", icon: "🔮", link: "/farmer-dashboard/price-prediction" },
+    { name: "Calculator", icon: "🧮", link: "/farmer-dashboard/calculator" },
+    { name: "Mandi Prices", icon: "📈", link: "/farmer-dashboard/mandi-prices" },
+    { name: "Traceability", icon: "🌱", link: "/farmer-dashboard/traceability" },
+  ];
 
   return (
     <div className="flex h-screen bg-[#EBE5D9] overflow-hidden selection:bg-[#FBC02D] selection:text-[#0A2F1D] font-sans relative">
@@ -70,24 +83,21 @@ export default function FarmerDashboardLayout({
         </div>
 
         <nav className="flex-1 mt-12 px-4 space-y-3">
-          {[
-            { name: "Dashboard", icon: "📊", link: "/farmer-dashboard", active: true },
-            { name: "Marketplace", icon: "🤝", link: "/farmer-dashboard/marketplace", active: false },
-            { name: "AI Advisor", icon: "🤖", link: "/farmer-dashboard/ai-advisor", active: false },
-            { name: "Price Forecast", icon: "🔮", link: "/farmer-dashboard/price-forecast", active: false },
-            { name: "Calculator", icon: "🧮", link: "/farmer-dashboard/calculator", active: false },
-            { name: "Mandi Prices", icon: "📈", link: "/mandi-prices", active: false },
-            { name: "Traceability", icon: "🌱", link: "/farmer-dashboard/traceability", active: false },
-          ].map((nav, idx) => (
-            <Link key={idx} href={nav.link} className={`flex items-center justify-center lg:justify-start space-x-4 px-4 py-4 rounded-2xl transition-all duration-150 font-bold ${
-              nav.active 
-              ? 'bg-gradient-to-b from-[#0A2F1D] to-[#062013] text-[#FDF8EE] shadow-[0_8px_15px_rgba(10,47,29,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] scale-105' 
-              : 'text-[#627768] hover:bg-white/80 hover:text-[#0A2F1D] hover:shadow-[0_5px_15px_rgba(10,47,29,0.08)] hover:-translate-y-1'
-            }`}>
-              <span className="text-xl drop-shadow-md">{nav.icon}</span>
-              <span className="hidden lg:block">{nav.name}</span>
-            </Link>
-          ))}
+          {navLinks.map((nav, idx) => {
+            // Check if the current URL matches the link to highlight the active tab
+            const isActive = pathname === nav.link;
+
+            return (
+              <Link key={idx} href={nav.link} className={`flex items-center justify-center lg:justify-start space-x-4 px-4 py-4 rounded-2xl transition-all duration-150 font-bold ${
+                isActive 
+                ? 'bg-gradient-to-b from-[#0A2F1D] to-[#062013] text-[#FDF8EE] shadow-[0_8px_15px_rgba(10,47,29,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] scale-105' 
+                : 'text-[#627768] hover:bg-white/80 hover:text-[#0A2F1D] hover:shadow-[0_5px_15px_rgba(10,47,29,0.08)] hover:-translate-y-1'
+              }`}>
+                <span className="text-xl drop-shadow-md">{nav.icon}</span>
+                <span className="hidden lg:block">{nav.name}</span>
+              </Link>
+            );
+          })}
         </nav>
 
         {/* BOTTOM SIDEBAR ACTIONS (Voice & Profile) */}

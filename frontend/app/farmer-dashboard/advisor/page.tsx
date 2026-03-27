@@ -71,7 +71,7 @@ export default function AdvisorPage() {
       <div className="absolute inset-0 bg-noise z-0 pointer-events-none"></div>
       <div className="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-[#10893E] rounded-full mix-blend-multiply filter blur-[150px] opacity-20 pointer-events-none z-0 animate-pulse"></div>
       
-      {/* --- SIDEBAR --- */}
+      {/* --- SIDEBAR ---
       <aside className={`relative z-20 w-24 lg:w-64 h-[calc(100vh-2rem)] my-4 ml-4 glass-sidebar rounded-3xl flex flex-col justify-between py-8 transition-all duration-300 ease-out transform ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
         <div className="px-0 lg:px-8 flex justify-center lg:justify-start items-center">
           <Link href="/" className="flex items-center space-x-3 group">
@@ -114,7 +114,7 @@ export default function AdvisorPage() {
             </div>
           </Link>
         </div>
-      </aside>
+      </aside> */}
 
       {/* --- MAIN CONTENT --- */}
       <main className="flex-1 h-full overflow-y-auto hide-scrollbar p-4 md:p-8 relative z-10 pb-32">

@@ -87,7 +87,7 @@ export default function CalculatorPage() {
       <div className="absolute inset-0 bg-noise z-0 pointer-events-none opacity-40"></div>
       
       {/* --- SIDEBAR --- */}
-      <aside className={`relative z-20 w-24 lg:w-64 h-[calc(100vh-2rem)] my-4 ml-4 glass-sidebar rounded-3xl flex flex-col justify-between py-8 transition-all duration-300 ease-out transform ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
+      {/* <aside className={`relative z-20 w-24 lg:w-64 h-[calc(100vh-2rem)] my-4 ml-4 glass-sidebar rounded-3xl flex flex-col justify-between py-8 transition-all duration-300 ease-out transform ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
         <div className="px-0 lg:px-8 flex justify-center lg:justify-start items-center">
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="w-10 h-10 bg-gradient-to-br from-[#0A2F1D] to-[#10893E] rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-150">
@@ -117,7 +117,7 @@ export default function CalculatorPage() {
         </nav>
 
         {/* PROFILE BADGE - RESTORED */}
-        <div className="px-4 mt-auto">
+        {/* <div className="px-4 mt-auto">
           <Link href="/profile" className="flex items-center justify-center lg:justify-start space-x-3 p-2 rounded-2xl hover:bg-white/80 transition-all duration-150 group border border-transparent hover:border-[#E2DFD3]">
             <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] flex items-center justify-center text-[#0A2F1D] font-black border-2 border-white shadow-[0_4px_8px_rgba(251,192,45,0.4)] group-hover:scale-110 transition-transform duration-150">
               US
@@ -128,7 +128,7 @@ export default function CalculatorPage() {
             </div>
           </Link>
         </div>
-      </aside>
+      </aside> */} 
 
       {/* --- MAIN CONTENT --- */}
       <main className="flex-1 h-full overflow-y-auto hide-scrollbar p-6 md:p-12 relative z-10">
