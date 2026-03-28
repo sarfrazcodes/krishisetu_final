@@ -81,6 +81,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             <Link href="/" className="text-slate-600 font-medium hover:text-emerald-700 transition-colors">Home</Link>
             <Link href="/commodities" className="text-slate-600 font-medium hover:text-emerald-700 transition-colors">Mandis</Link>
+            <Link href="/about" className="text-slate-600 font-medium hover:text-emerald-700 transition-colors">About Us</Link>
           </div>
         </div>
 
@@ -126,18 +127,23 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          {/* Clean Voice Assisant */}
+          {/* Premium Voice AI Chip */}
           <button
             ref={voiceButtonRef}
             onClick={toggleVoiceDropdown}
-            className={`flex items-center justify-center p-2.5 rounded-full transition-colors
+            className={`flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-full font-bold text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all
               ${isVoiceDropdownOpen
-                ? "bg-amber-100 text-amber-700"
-                : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                ? "bg-gradient-to-r from-amber-400 to-[#FBC02D] text-[#0A2F1D] shadow-[0_4px_15px_rgba(251,192,45,0.4)] border border-amber-300"
+                : "bg-gradient-to-r from-[#10893E] to-emerald-600 text-white hover:from-emerald-600 hover:to-[#10893E] border border-emerald-500"
               }`}
-            title="Voice Search"
+            title="Ask KrishiSetu AI"
           >
-            <Mic className="w-5 h-5" />
+            <div className={`flex items-center justify-center w-6 h-6 rounded-full ${isVoiceDropdownOpen ? 'bg-amber-100' : 'bg-white/20'}`}>
+              <Mic className={`w-3.5 h-3.5 ${isVoiceDropdownOpen ? 'text-amber-800 animate-pulse' : 'text-white'}`} />
+            </div>
+            <span className="hidden sm:block tracking-wide">
+              {isVoiceDropdownOpen ? "Listening..." : "Talk with KrishiSetu"}
+            </span>
           </button>
 
           <div className="w-[1px] h-6 bg-emerald-100 mx-1 hidden md:block"></div>

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes import crops
 from app.routes.auth import login, signup
 from app.routes import listings, requests, traceability
+from app.routes import voice
 
 app = FastAPI(title="KrishiSetu Backend")
 
@@ -20,6 +21,7 @@ app.include_router(signup.router)
 app.include_router(listings.router)
 app.include_router(requests.router)
 app.include_router(traceability.router)
+app.include_router(voice.router)
 
 @app.get("/")
 def root():

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter, usePathname } from "next/navigation";
 
 interface VoiceDropdownProps {
   isOpen: boolean;
@@ -12,11 +13,11 @@ interface VoiceDropdownProps {
 type StatusType = "idle" | "listening" | "heard" | "loading" | "success" | "error";
 
 const LANGUAGE_OPTIONS = [
-  { label: "English (India)", code: "en-IN" },
   { label: "Hindi", code: "hi-IN" },
   { label: "Punjabi", code: "pa-IN" },
   { label: "Marathi", code: "mr-IN" },
   { label: "Tamil", code: "ta-IN" },
+  { label: "English (India)", code: "en-IN" },
 ];
 
 const QUICK_EXAMPLES = [
@@ -38,6 +39,48 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Eagerly load available browser voices
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.getVoices();
+    }
+  }, []);
+
+  // Audio function
+  const playAudio = (text: string, langCode: string, actionType: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // stop previous
+      const utterance = new SpeechSynthesisUtterance(text);
+      let targetLang = "en-IN";
+      if (langCode?.toLowerCase().includes("hindi") || langCode?.toLowerCase().includes("punjabi") || selectedLang.code === "hi-IN") {
+        targetLang = "hi-IN";
+      }
+      utterance.lang = targetLang;
+
+      // Force proper localized Voice Profile (Google Hindi / Native OS Dialect)
+      const voices = window.speechSynthesis.getVoices();
+      const localizedVoice = voices.find(v => v.lang === targetLang || v.lang.replace('_', '-') === targetLang) || voices.find(v => v.lang.includes(targetLang.split('-')[0]));
+      
+      if (localizedVoice) {
+        utterance.voice = localizedVoice;
+      }
+      
+      utterance.rate = 0.95; // Slightly slower, highly empathetic pacing
+      
+      utterance.onend = () => {
+        if (actionType === "ask_clarification") {
+          // Restart microphone instantly for continuous dialogue
+          if (!isListening) toggleListening();
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   // Close on outside click
   useEffect(() => {
@@ -125,6 +168,8 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
       if (event.results[event.results.length - 1].isFinal) {
         setStatusType("heard");
         setStatusMessage(`✓ Heard: "${transcript}"`);
+        // Auto-submit instantly
+        handleSubmit(transcript);
       }
     };
 
@@ -144,8 +189,9 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
     recognition.start();
   }, [isListening, selectedLang, stopListening]);
 
-  const handleSubmit = async () => {
-    const trimmed = query.trim();
+  const handleSubmit = async (overrideQuery?: string) => {
+    const textToSubmit = overrideQuery || query;
+    const trimmed = textToSubmit.trim();
     if (!trimmed || isLoading) return;
 
     setIsLoading(true);
@@ -155,16 +201,68 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
     setStatusMessage("Fetching prediction…");
 
     try {
-      const response = await fetch("/api/predict", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      
+      let role = "guest";
+      let userId = null;
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const u = JSON.parse(storedUser);
+          role = String(u.role || "guest").toLowerCase();
+          userId = u.id || null;
+        }
+      } catch(e) {}
+
+      let pageContextText = "";
+      try {
+        pageContextText = document.body.innerText.substring(0, 2000).replace(/\s+/g, ' ');
+      } catch(e) {}
+
+      const response = await fetch(`${API_URL}/voice`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: trimmed }),
+        body: JSON.stringify({ 
+          text: trimmed,
+          role: role,
+          user_id: userId,
+          pathname: pathname || "/",
+          page_content: pageContextText
+        }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Failed to get prediction");
-      setResult(data.result);
+      if (!response.ok) throw new Error(data.detail || "Failed to process voice command");
+      
+      setResult(data.message);
       setStatusType("success");
-      setStatusMessage("Done");
+      setStatusMessage(`Action: ${data.action || 'success'}`);
+      
+      // Text-to-Speech Output
+      playAudio(data.message, data.language || "Hindi", data.action || "");
+
+      // Interactive Navigation Routing (Wait slightly so voice starts)
+      if (data.action === "navigate" && data.route) {
+        setTimeout(() => {
+          router.push(data.route);
+        }, 150); 
+        onClose();
+      }
+
+      // Real-time Visual Form Prefill (Navigate Farmer to UI Listing Editor)
+      if (data.action === "add_listing") {
+        setTimeout(() => {
+           let targetUrl = "/farmer-dashboard/new-listing";
+           if (data.crop || data.quantity) {
+             const params = new URLSearchParams();
+             if (data.crop) params.append("crop", data.crop);
+             if (data.quantity) params.append("quantity", data.quantity);
+             targetUrl += `?${params.toString()}`;
+           }
+           router.push(targetUrl);
+        }, 300);
+        onClose();
+      }
+
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
       setError(msg);
@@ -237,8 +335,8 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 text-sm">Voice Assistant</h3>
-                    <p className="text-xs text-gray-500">Speak or type your query</p>
+                    <h3 className="font-semibold text-gray-900 text-sm">Talk with KrishiSetu</h3>
+                    <p className="text-xs text-gray-500">I will reply instantly in your language</p>
                   </div>
                 </div>
                 <button
@@ -317,7 +415,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
 
                 {/* Submit button — always visible */}
                 <button
-                  onClick={handleSubmit}
+                  onClick={() => handleSubmit()}
                   disabled={!query.trim() || isLoading}
                   className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-150 ${
                     query.trim() && !isLoading
@@ -334,7 +432,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
                     </>
                   ) : (
                     <>
-                      Get Prediction
+                      Ask KrishiSetu
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M5 12h14M13 6l6 6-6 6" />
                       </svg>
@@ -345,7 +443,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
                 {/* Result */}
                 {result && (
                   <div className="p-4 rounded-xl bg-green-50 border border-green-200">
-                    <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">Prediction Result</p>
+                    <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">KrishiSetu Voice Response</p>
                     <p className="text-sm text-gray-800 leading-relaxed">{result}</p>
                   </div>
                 )}

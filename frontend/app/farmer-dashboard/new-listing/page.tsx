@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // --- CUSTOM COMPONENTS FOR CONSISTENCY ---
 
@@ -14,11 +14,11 @@ const ChunkyCard = ({ children, className = "" }: { children: React.ReactNode, c
 );
 
 // Reusable Chunky 3D Input with animation on focus
-const ChunkyInput = ({ ...props }) => (
+const ChunkyInput = ({ className = "", ...props }) => (
   <motion.input
     whileFocus={{ scale: 1.01, borderColor: "#10893E" }}
     transition={{ duration: 0.15 }}
-    className="w-full px-5 py-4 bg-[#FDF8EE] rounded-xl border-2 border-[#D6D0C4] text-[#0A2F1D] text-base font-medium placeholder-[#8A9A90] focus:outline-none focus:ring-1 focus:ring-[#10893E] focus:border-b-[4px] transition-all duration-150 shadow-inner"
+    className={`w-full px-5 py-4 bg-[#FDF8EE] rounded-xl border-2 border-[#D6D0C4] text-[#0A2F1D] text-base font-medium placeholder-[#8A9A90] focus:outline-none focus:ring-1 focus:ring-[#10893E] focus:border-b-[4px] transition-all duration-150 shadow-inner ${className}`}
     {...props}
   />
 );
@@ -33,13 +33,14 @@ const CROP_OPTIONS = [
   { value: "Potato (Kufri)", label: "Potato (Kufri)", icon: "🥔" },
 ];
 
-export default function NewListingPage() {
+function NewListingForm() {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   
-  // Form State
-  const [crop, setCrop] = useState("");
-  const [quantity, setQuantity] = useState("");
+  // Automatically prefill Form State if Voice AI injected URL contextual parameters
+  const [crop, setCrop] = useState(searchParams.get("crop") || "");
+  const [quantity, setQuantity] = useState(searchParams.get("quantity") || "");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -193,15 +194,19 @@ export default function NewListingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
                 <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Available Quantity</label>
-                <ChunkyInput value={quantity} onChange={(e: any) => setQuantity(e.target.value)} type="number" placeholder="50" required className="pr-20" />
-                <span className="absolute right-5 top-[52px] text-sm font-bold text-[#10893E]">Quintals</span>
+                <div className="relative">
+                  <ChunkyInput value={quantity} onChange={(e: any) => setQuantity(e.target.value)} type="number" placeholder="50" required className="pr-24" />
+                  <span className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#10893E]">Quintals</span>
+                </div>
               </div>
               
               <div className="relative">
                 <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Expected Price (Optional)</label>
-                <ChunkyInput value={price} onChange={(e: any) => setPrice(e.target.value)} type="number" placeholder="2,210" className="pl-12" />
-                <span className="absolute left-5 top-[52px] text-sm font-bold text-[#10893E]">₹</span>
-                <span className="absolute right-5 top-[52px] text-xs font-bold text-[#10893E]/60">per/q</span>
+                <div className="relative">
+                  <ChunkyInput value={price} onChange={(e: any) => setPrice(e.target.value)} type="number" placeholder="2,210" className="pl-12 pr-16" />
+                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#10893E]">₹</span>
+                  <span className="absolute right-5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#10893E]/60">per/q</span>
+                </div>
               </div>
             </div>
             <p className="text-xs text-[#2D503C]/70 font-bold mt-4 pl-1 flex items-center gap-1.5">
@@ -250,53 +255,7 @@ export default function NewListingPage() {
         {/* RIGHT COLUMN: Image Upload & Submission */}
         <div className="lg:col-span-1 space-y-8">
           
-          {/* Section 4: Harvest Images */}
-          <ChunkyCard>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-3xl">📸</span>
-              <h2 className="text-xl font-bold text-[#0A2F1D]">Harvest Images</h2>
-            </div>
-            
-            <div className="space-y-4">
-              {/* Primary Image Preview Area with Dotted Border */}
-              <motion.div 
-                onClick={() => fileInputRef.current?.click()}
-                whileHover={{ y: -2 }}
-                className="relative flex items-center justify-center w-full h-56 rounded-xl border-4 border-dashed border-[#D6D0C4] bg-[#FDF8EE] hover:border-[#10893E]/40 hover:bg-[#10893E]/5 cursor-pointer transition-all overflow-hidden shadow-inner group"
-              >
-                {selectedImage ? (
-                  <img src={selectedImage} alt="Preview" className="w-full h-full object-cover rounded-xl" />
-                ) : (
-                  <div className="text-center p-6 text-[#2D503C]">
-                    <span className="text-6xl group-hover:scale-110 transition-transform inline-block">➕</span>
-                    <p className="font-black text-lg mt-3 group-hover:text-[#10893E]">Add Cover Image</p>
-                    <p className="text-xs font-bold opacity-60 mt-1">PNG, JPG up to 10MB</p>
-                  </div>
-                )}
-                {/* Hidden File Input */}
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleImageChange} 
-                  accept="image/*" 
-                  className="hidden" 
-                />
-              </motion.div>
-              
-              {/* Thumbnail Gallery (static placeholders for UI) */}
-              <div className="grid grid-cols-3 gap-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <button 
-                    key={i} 
-                    type="button"
-                    className="aspect-square flex items-center justify-center rounded-lg bg-white border-2 border-[#D6D0C4] text-[#D6D0C4] hover:text-[#10893E] hover:border-[#10893E]/40 hover:scale-105 transition-all text-xl"
-                  >
-                    ➕
-                  </button>
-                ))}
-              </div>
-            </div>
-          </ChunkyCard>
+
 
           {/* Section 5: SUBMIT BLOCK */}
           <div className="lg:sticky lg:top-28">
@@ -334,5 +293,13 @@ export default function NewListingPage() {
 
       </form>
     </motion.main>
+  );
+}
+
+export default function NewListingPage() {
+  return (
+    <Suspense fallback={<div className="p-10 font-bold text-[#10893E]">Loading Form...</div>}>
+      <NewListingForm />
+    </Suspense>
   );
 }

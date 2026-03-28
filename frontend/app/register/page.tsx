@@ -73,7 +73,7 @@ export default function RegisterPage() {
 
   return (
     <main
-      className="min-h-screen bg-[#FDF8EE] flex flex-col items-center justify-center p-4 relative overflow-hidden selection:bg-[#FBC02D] selection:text-[#0A2F1D]"
+      className="min-h-screen bg-[#FDF8EE] flex flex-col items-center pt-[120px] pb-12 p-4 relative overflow-y-auto overflow-x-hidden selection:bg-[#FBC02D] selection:text-[#0A2F1D]"
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
       <Navbar />
@@ -111,8 +111,8 @@ export default function RegisterPage() {
       <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#10893E] rounded-full mix-blend-multiply filter blur-[100px] opacity-10 animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#FBC02D] rounded-full mix-blend-multiply filter blur-[120px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-      {/* ENLARGED FADED LOGO WATERMARK */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-[600px] h-[600px] md:w-[900px] md:h-[900px] opacity-[0.15] pointer-events-none z-0 flex items-center justify-center mix-blend-darken">
+      {/* NORMALIZED FADED LOGO WATERMARK */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-[350px] h-[350px] md:w-[500px] md:h-[500px] opacity-[0.10] pointer-events-none z-0 flex items-center justify-center mix-blend-darken">
         <img src="/logo.png" alt="" className="w-full h-full object-contain filter grayscale-[20%]" />
       </div>
 
@@ -125,14 +125,14 @@ export default function RegisterPage() {
           }`}
       >
         {/* Logo / Back to Home Link */}
-        <div className="text-center mb-6 mt-8">
+        <div className="text-center mb-4 mt-6">
           <Link href="/" className="inline-block group">
-            <h1 className="heading-serif intelligence-effect text-7xl md:text-8xl font-black tracking-tighter drop-shadow-sm pb-1 pr-2">
+            <h1 className="heading-serif intelligence-effect text-5xl md:text-6xl font-black tracking-tighter drop-shadow-sm pb-1 pr-2">
               KrishiSetu
             </h1>
           </Link>
-          <h2 className="heading-serif text-3xl font-black text-[#0A2F1D] mt-4">Join the Network</h2>
-          <p className="text-lg text-[#2D503C] font-medium mt-1">Create your account to access market intelligence.</p>
+          <h2 className="heading-serif text-2xl font-black text-[#0A2F1D] mt-3">Join the Network</h2>
+          <p className="text-base text-[#2D503C] font-medium mt-1">Create your account to access market intelligence.</p>
         </div>
 
         {/* 3D Frosted Glass Form Card */}

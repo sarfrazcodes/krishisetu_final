@@ -113,8 +113,8 @@ export default function LoginPage() {
       <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#10893E] rounded-full mix-blend-multiply filter blur-[100px] opacity-10 animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#FBC02D] rounded-full mix-blend-multiply filter blur-[120px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-      {/* --- ENLARGED FADED LOGO WATERMARK --- */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-[600px] h-[600px] md:w-[900px] md:h-[900px] opacity-[0.15] pointer-events-none z-0 flex items-center justify-center mix-blend-darken">
+      {/* --- NORMALIZED FADED LOGO WATERMARK --- */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-[350px] h-[350px] md:w-[500px] md:h-[500px] opacity-[0.10] pointer-events-none z-0 flex items-center justify-center mix-blend-darken">
         <img src="/logo.png" alt="" className="w-full h-full object-contain filter grayscale-[20%]" />
       </div>
 
@@ -129,16 +129,16 @@ export default function LoginPage() {
         }`}
       >
         {/* Logo / Back to Home Link */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <Link href="/" className="inline-block group">
-            {/* Added heading-serif here */}
-            <h1 className="heading-serif intelligence-effect text-7xl font-black tracking-tighter drop-shadow-sm pb-1 pr-2">
+            {/* Reduced Title Size */}
+            <h1 className="heading-serif intelligence-effect text-5xl md:text-6xl font-black tracking-tighter drop-shadow-sm pb-1 pr-2">
               KrishiSetu
             </h1>
           </Link>
-          {/* Added heading-serif here */}
-          <h2 className="heading-serif text-4xl font-black text-[#0A2F1D] mt-4">Welcome Back</h2>
-          <p className="text-lg text-[#2D503C] font-medium mt-1">Sign in to access your intelligence dashboard.</p>
+          {/* Reduced Subtitle Size */}
+          <h2 className="heading-serif text-3xl font-black text-[#0A2F1D] md:mt-2 mt-4">Welcome Back</h2>
+          <p className="text-base text-[#2D503C] font-medium mt-1">Sign in to access your intelligence dashboard.</p>
         </div>
 
         {/* Evaluator Access (Hackathon Purpose) */}

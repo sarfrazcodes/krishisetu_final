@@ -61,24 +61,7 @@ export default function FarmerDashboardLayout({
             })}
           </nav>
 
-          {/* BOTTOM SIDEBAR ACTIONS */}
-          <div className="px-4 lg:px-6 mt-4 flex flex-col gap-4">
-            <button
-              onClick={toggleVoice}
-              className={`flex items-center justify-center lg:justify-between px-4 py-4 rounded-xl transition-all duration-300 border-2 group w-full font-bold
-                ${isListening
-                  ? "bg-red-50 text-red-600 border-red-200 shadow-inner"
-                  : "bg-white text-[#0A2F1D] border-[#E2DFD3] hover:border-[#10893E]/30 hover:bg-emerald-50/50 shadow-sm"
-                }`}
-            >
-              <div className="flex items-center space-x-3">
-                <span className={`text-xl ${isListening ? 'animate-pulse' : ''}`}>🎤</span>
-                <span className="hidden lg:block text-sm">
-                  {isListening ? "Listening..." : "Voice Command"}
-                </span>
-              </div>
-            </button>
-          </div>
+
         </aside>
 
         {/* --- SCROLLABLE RIGHT CONTENT AREA --- */}
