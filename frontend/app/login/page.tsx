@@ -41,8 +41,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // TODO: Change `http://127.0.0.1:8000` to your actual deployed backend URL
-      const response = await fetch("http://127.0.0.1:8000/auth/login", {
+      // Using deployed backend URL
+      const response = await fetch("https://krishisetu-hhef.onrender.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, password })

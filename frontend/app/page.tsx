@@ -133,7 +133,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchPrices = async () => {
       try {
-        const API_BASE = typeof window !== "undefined" ? `http://${window.location.hostname}:8000` : "http://127.0.0.1:8000";
+        const API_BASE = "https://krishisetu-hhef.onrender.com";
 
         // 1. Get all base crops — This is lightning fast (50ms)
         const cropsRes = await fetch(`${API_BASE}/crops`);

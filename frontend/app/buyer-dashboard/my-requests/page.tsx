@@ -17,7 +17,7 @@ export default function MyRequestsPage() {
   const fetchMyRequests = async () => {
     try {
       const token = localStorage.getItem("token");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
       const res = await fetch(`${API_URL}/requests/my-requests`, {
         headers: { "Authorization": `Bearer ${token}` }
       });

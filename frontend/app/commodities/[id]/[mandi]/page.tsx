@@ -95,7 +95,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const API_BASE = typeof window !== "undefined" ? `http://${window.location.hostname}:8000` : "http://127.0.0.1:8000";
+    const API_BASE = "https://krishisetu-hhef.onrender.com";
 
     // 1. Instantly pull History and numerical ML trajectory
     Promise.all([

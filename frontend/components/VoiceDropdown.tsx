@@ -201,7 +201,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
     setStatusMessage("Fetching prediction…");
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
       
       let role = "guest";
       let userId = null;

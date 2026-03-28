@@ -27,7 +27,7 @@ export default function PricePredictionPage() {
   useEffect(() => {
     if (!mounted) return;
     setLoading(true);
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
     
     Promise.all([
       fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}/history`).then(r => r.json()),
