@@ -107,7 +107,7 @@ function NewListingForm() {
     <motion.main
       initial={{ opacity: 0, y: 15 }}
       animate={mounted ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.6 }}
       className="p-6 md:p-10"
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >

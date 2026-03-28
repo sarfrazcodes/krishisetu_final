@@ -195,7 +195,7 @@ export default function TradeHistoryPage() {
           </div>
 
           {/* Animated Central Connecting Line */}
-          <motion.div initial={{ height: 0 }} animate={{ height: "100%" }} transition={{ duration: 1.5, ease: "easeInOut" }} className="absolute left-6 md:left-1/2 top-28 bottom-0 w-1 bg-gradient-to-b from-[#10893E] via-[#10893E]/50 to-transparent transform md:-translate-x-1/2 rounded-full shadow-[0_0_10px_rgba(16,137,62,0.3)] z-0" />
+          <motion.div initial={{ height: 0 }} animate={{ height: "100%" }} transition={{ duration: 1.5 }} className="absolute left-6 md:left-1/2 top-28 bottom-0 w-1 bg-gradient-to-b from-[#10893E] via-[#10893E]/50 to-transparent transform md:-translate-x-1/2 rounded-full shadow-[0_0_10px_rgba(16,137,62,0.3)] z-0" />
 
           <div className="relative z-10">
             {traceData.map((item, index) => (
