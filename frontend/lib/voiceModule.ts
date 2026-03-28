@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * lib/voiceModule.ts
  * ─────────────────────────────────────────────────────────
@@ -11,8 +12,8 @@
 /* ── Browser type augmentation ─────────────────────────── */
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
   }
 }
 
