@@ -50,16 +50,16 @@ export default function ProcurementPage() {
 
     // 2. Get existing offers from browser memory
     const existingOffers = JSON.parse(localStorage.getItem("krishisetu_offers") || "[]");
-    
+
     // 3. Add the new offer
     existingOffers.push(newOffer);
-    
+
     // 4. Save back to memory
     localStorage.setItem("krishisetu_offers", JSON.stringify(existingOffers));
-    
+
     // 5. Update UI to show success checkmark
     setSentOffers((prev) => [...prev, id]);
-    
+
     // Optional: Alert just so you know it worked while testing
     alert(`Offer for ${crop} sent successfully to ${farmerName}! Check the Farmer Dashboard.`);
   };
@@ -74,7 +74,7 @@ export default function ProcurementPage() {
           <h1 className="text-3xl md:text-4xl font-black text-[#0A2F1D] mb-1 drop-shadow-sm">Procurement Market</h1>
           <p className="text-[#627768] font-medium">Browse verified farmer harvests and secure your supply.</p>
         </div>
-        
+
         <div className="mt-4 md:mt-0 flex space-x-4 items-center">
           <Link href="/buyer-dashboard/notifications">
             <button className="bg-white border border-[#E2DFD3] shadow-sm p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 transition-all relative">
@@ -93,11 +93,11 @@ export default function ProcurementPage() {
       <h2 className="text-2xl font-black text-[#0A2F1D] drop-shadow-sm mb-6">Live Farmer Harvests</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
-        
+
         {isLoading ? (
-           <p className="text-[#627768] font-bold">Loading live harvests...</p>
+          <p className="text-[#627768] font-bold">Loading live harvests...</p>
         ) : listings.length === 0 ? (
-           <p className="text-[#627768] font-bold">No active harvests available right now.</p>
+          <p className="text-[#627768] font-bold">No active harvests available right now.</p>
         ) : (
           listings.map((item: any) => (
             <div key={item.id} className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] flex flex-col justify-between">
@@ -111,7 +111,7 @@ export default function ProcurementPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="my-5 p-4 bg-white/60 rounded-2xl border border-white/80 shadow-inner">
                   <p className="text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-1">Available Crop</p>
                   <div className="flex items-center space-x-2">
@@ -131,16 +131,15 @@ export default function ProcurementPage() {
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={() => handleSendOffer(item.users?.name || "Farmer", item.crop, item.quantity, item.price, item.id)}
                 disabled={sentOffers.includes(item.id)}
-                className={`w-full py-3 rounded-xl font-black transition-all flex justify-center items-center gap-2 ${
-                  sentOffers.includes(item.id) 
-                  ? "bg-[#10893E] text-white shadow-inner cursor-default" 
-                  : "bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] text-[#0A2F1D] shadow-[0_6px_0_0_#D49800] hover:translate-y-[4px] hover:shadow-[0_2px_0_0_#D49800] border border-[#F5B921]"
-                }`}
+                className={`w-full py-3 rounded-xl font-black transition-all flex justify-center items-center gap-2 ${sentOffers.includes(item.id)
+                    ? "bg-[#10893E] text-white shadow-inner cursor-default"
+                    : "bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] text-[#0A2F1D] shadow-[0_6px_0_0_#D49800] hover:translate-y-[4px] hover:shadow-[0_2px_0_0_#D49800] border border-[#F5B921]"
+                  }`}
               >
-                {sentOffers.includes(item.id) ? <><CheckCircle2 className="w-5 h-5"/> Offer Sent</> : "Send Offer"}
+                {sentOffers.includes(item.id) ? <><CheckCircle2 className="w-5 h-5" /> Offer Sent</> : "Send Offer"}
               </button>
             </div>
           ))

@@ -37,7 +37,7 @@ function NewListingForm() {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Automatically prefill Form State if Voice AI injected URL contextual parameters
   const [crop, setCrop] = useState(searchParams.get("crop") || "");
   const [quantity, setQuantity] = useState(searchParams.get("quantity") || "");
@@ -58,7 +58,7 @@ function NewListingForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
-    
+
     if (!crop || !quantity || !location) {
       setErrorMsg("Please fill all required fields.");
       return;
@@ -111,9 +111,10 @@ function NewListingForm() {
       className="p-6 md:p-10"
       style={{ fontFamily: "'Manrope', sans-serif" }}
     >
-      
+
       {/* GLOBAL ANIMATIONS FOR SUBMIT BUTTON SHINE */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes rolling-shine {
           0% { background-position: 200% center; }
           100% { background-position: -200% center; }
@@ -123,7 +124,7 @@ function NewListingForm() {
       {/* HEADER AREA with tactile back button */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10 pb-4 border-b border-[#D6D0C4]/40">
         <div>
-          <button 
+          <button
             onClick={() => router.back()}
             className="flex items-center gap-2 mb-2 px-3 py-1.5 rounded-full bg-[#10893E]/10 border border-[#10893E]/30 text-[#10893E] text-xs font-bold hover:bg-[#10893E]/20 hover:-translate-y-[1px] active:translate-y-[1px] transition-all whitespace-nowrap"
           >
@@ -145,17 +146,17 @@ function NewListingForm() {
 
       {/* MAIN CONTENT Bento Grid wrapper */}
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* LEFT COLUMN: Main Form Details */}
         <div className="lg:col-span-2 space-y-8">
-          
+
           {/* Section 1: Basic Info */}
           <ChunkyCard>
             <div className="flex items-center gap-3 mb-6">
               <span className="text-3xl">📝</span>
               <h2 className="text-xl font-bold text-[#0A2F1D]">Basic Information</h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Crop Type & Variety</label>
@@ -176,7 +177,7 @@ function NewListingForm() {
                   ))}
                 </motion.select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Grade / Quality</label>
                 <ChunkyInput placeholder="e.g. Grade A, Superfine" required />
@@ -190,7 +191,7 @@ function NewListingForm() {
               <span className="text-3xl">⚖️</span>
               <h2 className="text-xl font-bold text-[#0A2F1D]">Quantity & Pricing</h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
                 <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Available Quantity</label>
@@ -199,7 +200,7 @@ function NewListingForm() {
                   <span className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#10893E]">Quintals</span>
                 </div>
               </div>
-              
+
               <div className="relative">
                 <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Expected Price (Optional)</label>
                 <div className="relative">
@@ -220,11 +221,11 @@ function NewListingForm() {
               <span className="text-3xl">🗒️</span>
               <h2 className="text-xl font-bold text-[#0A2F1D]">Harvest Details & Notes</h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Harvest Date</label>
-                <motion.input 
+                <motion.input
                   type="date"
                   whileFocus={{ scale: 1.01, borderColor: "#10893E" }}
                   transition={{ duration: 0.15 }}
@@ -232,7 +233,7 @@ function NewListingForm() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Current Stored Location</label>
                 <ChunkyInput value={location} onChange={(e: any) => setLocation(e.target.value)} placeholder="e.g. Village Godown / Mandi" required />
@@ -241,7 +242,7 @@ function NewListingForm() {
 
             <div>
               <label className="block text-sm font-bold text-[#0A2F1D] mb-2 pl-1">Additional Description</label>
-              <motion.textarea 
+              <motion.textarea
                 rows={4}
                 placeholder="e.g. Organic, stored with care, ready for pickup. Contact for quality check."
                 whileFocus={{ scale: 1.01, borderColor: "#10893E" }}
@@ -254,7 +255,7 @@ function NewListingForm() {
 
         {/* RIGHT COLUMN: Image Upload & Submission */}
         <div className="lg:col-span-1 space-y-8">
-          
+
 
 
           {/* Section 5: SUBMIT BLOCK */}
@@ -264,23 +265,22 @@ function NewListingForm() {
               <h3 className="text-base text-[#2D503C] font-semibold mb-6 leading-relaxed">By publishing, you confirm that the harvest is your own and the details provided are accurate.</h3>
 
               {/* THE CHUNKY 3D GOLD BLOCK SUBMIT BUTTON */}
-              <motion.button 
+              <motion.button
                 type="submit"
                 disabled={isSubmitting}
                 whileHover={!isSubmitting ? { scale: 1.02, translateY: "-4px" } : {}}
                 whileTap={!isSubmitting ? { scale: 0.98, translateY: "4px" } : {}}
-                className={`w-full group relative overflow-hidden px-8 py-5 text-[#0A2F1D] text-lg md:text-xl font-black rounded-2xl border-2 border-b-[8px] transition-all duration-200 shadow-[0_12px_24px_rgba(251,192,45,0.3)] ${
-                  isSubmitting ? "bg-gray-300 border-gray-400 opacity-70 cursor-not-allowed" : "bg-[#FBC02D] border-[#D4A017] hover:bg-[#FCD14D] hover:shadow-[0_4px_0_0_#D4A017,0_20px_40px_rgba(251,192,45,0.4)] active:border-b-2 active:shadow-none active:bg-[#D4A017]"
-                }`}
+                className={`w-full group relative overflow-hidden px-8 py-5 text-[#0A2F1D] text-lg md:text-xl font-black rounded-2xl border-2 border-b-[8px] transition-all duration-200 shadow-[0_12px_24px_rgba(251,192,45,0.3)] ${isSubmitting ? "bg-gray-300 border-gray-400 opacity-70 cursor-not-allowed" : "bg-[#FBC02D] border-[#D4A017] hover:bg-[#FCD14D] hover:shadow-[0_4px_0_0_#D4A017,0_20px_40px_rgba(251,192,45,0.4)] active:border-b-2 active:shadow-none active:bg-[#D4A017]"
+                  }`}
               >
                 {!isSubmitting && <span className="absolute inset-0 w-full h-full -translate-x-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:translate-x-[150%] transition-transform duration-1000 ease-out z-0"></span>}
-                
+
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {isSubmitting ? "Publishing..." : "Publish My Harvest"}
                   {!isSubmitting && <span className="text-lg leading-none transform group-hover:rotate-12 group-hover:scale-125 transition-transform duration-300">🌾✨</span>}
                 </span>
               </motion.button>
-              
+
               <p className="text-center font-bold text-[#2D503C]/80 mt-6 text-sm">
                 or{' '}
                 <button type="button" onClick={() => router.back()} className="text-[#10893E] font-extrabold hover:text-[#D4A017] hover:underline transition-colors decoration-2 underline-offset-4">

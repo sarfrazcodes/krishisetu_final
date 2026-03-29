@@ -64,13 +64,13 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
       // Force proper localized Voice Profile (Google Hindi / Native OS Dialect)
       const voices = window.speechSynthesis.getVoices();
       const localizedVoice = voices.find(v => v.lang === targetLang || v.lang.replace('_', '-') === targetLang) || voices.find(v => v.lang.includes(targetLang.split('-')[0]));
-      
+
       if (localizedVoice) {
         utterance.voice = localizedVoice;
       }
-      
+
       utterance.rate = 0.95; // Slightly slower, highly empathetic pacing
-      
+
       utterance.onend = () => {
         if (actionType === "ask_clarification") {
           // Restart microphone instantly for continuous dialogue
@@ -126,7 +126,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
-      try { recognitionRef.current.stop(); } catch {}
+      try { recognitionRef.current.stop(); } catch { }
       recognitionRef.current = null;
     }
     setIsListening(false);
@@ -202,7 +202,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
-      
+
       let role = "guest";
       let userId = null;
       try {
@@ -212,17 +212,17 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
           role = String(u.role || "guest").toLowerCase();
           userId = u.id || null;
         }
-      } catch(e) {}
+      } catch (e) { }
 
       let pageContextText = "";
       try {
         pageContextText = document.body.innerText.substring(0, 2000).replace(/\s+/g, ' ');
-      } catch(e) {}
+      } catch (e) { }
 
       const response = await fetch(`${API_URL}/voice`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           text: trimmed,
           role: role,
           user_id: userId,
@@ -232,11 +232,11 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail || "Failed to process voice command");
-      
+
       setResult(data.message);
       setStatusType("success");
       setStatusMessage(`Action: ${data.action || 'success'}`);
-      
+
       // Text-to-Speech Output
       playAudio(data.message, data.language || "Hindi", data.action || "");
 
@@ -244,21 +244,21 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
       if (data.action === "navigate" && data.route) {
         setTimeout(() => {
           router.push(data.route);
-        }, 150); 
+        }, 150);
         onClose();
       }
 
       // Real-time Visual Form Prefill (Navigate Farmer to UI Listing Editor)
       if (data.action === "add_listing") {
         setTimeout(() => {
-           let targetUrl = "/farmer-dashboard/new-listing";
-           if (data.crop || data.quantity) {
-             const params = new URLSearchParams();
-             if (data.crop) params.append("crop", data.crop);
-             if (data.quantity) params.append("quantity", data.quantity);
-             targetUrl += `?${params.toString()}`;
-           }
-           router.push(targetUrl);
+          let targetUrl = "/farmer-dashboard/new-listing";
+          if (data.crop || data.quantity) {
+            const params = new URLSearchParams();
+            if (data.crop) params.append("crop", data.crop);
+            if (data.quantity) params.append("quantity", data.quantity);
+            targetUrl += `?${params.toString()}`;
+          }
+          router.push(targetUrl);
         }, 300);
         onClose();
       }
@@ -383,11 +383,10 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
                   <button
                     onClick={toggleListening}
                     title={isListening ? "Stop listening" : "Start listening"}
-                    className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 border transition-all duration-150 ${
-                      isListening
+                    className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 border transition-all duration-150 ${isListening
                         ? "bg-green-700 border-green-500"
                         : "bg-gray-800 border-gray-600 hover:border-gray-400"
-                    }`}
+                      }`}
                   >
                     <svg
                       width="17"
@@ -417,11 +416,10 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
                 <button
                   onClick={() => handleSubmit()}
                   disabled={!query.trim() || isLoading}
-                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-150 ${
-                    query.trim() && !isLoading
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-150 ${query.trim() && !isLoading
                       ? "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
                       : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  }`}
+                    }`}
                 >
                   {isLoading ? (
                     <>

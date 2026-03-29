@@ -6,21 +6,21 @@ import { Search, MapPin, Clock, ShieldCheck, Truck, Store, ArrowRight, ArrowLeft
 
 // --- POV-DRIVEN MOCK DATA FOR TIMELINE ---
 const traceData = [
-  { 
-    id: 1, stage: "Harvest & Origin", location: "Your Farm, Ludhiana", date: "Mar 20, 08:00 AM", 
-    details: "Crop logged by you. Organic farming methods and soil quality verified on-chain.", status: "Verified Origin", active: true, icon: Leaf 
+  {
+    id: 1, stage: "Harvest & Origin", location: "Your Farm, Ludhiana", date: "Mar 20, 08:00 AM",
+    details: "Crop logged by you. Organic farming methods and soil quality verified on-chain.", status: "Verified Origin", active: true, icon: Leaf
   },
-  { 
-    id: 2, stage: "Quality Assurance", location: "KrishiSetu Audit", date: "Mar 21, 02:30 PM", 
-    details: "Moisture content tested at 11%. Graded as Premium A-Class. Securely packaged and sealed.", status: "QA Passed", active: true, icon: ShieldCheck 
+  {
+    id: 2, stage: "Quality Assurance", location: "KrishiSetu Audit", date: "Mar 21, 02:30 PM",
+    details: "Moisture content tested at 11%. Graded as Premium A-Class. Securely packaged and sealed.", status: "QA Passed", active: true, icon: ShieldCheck
   },
-  { 
-    id: 3, stage: "Secure Transit", location: "KrishiSetu Freight Fleet", date: "Mar 22, 11:15 AM", 
-    details: "Loaded onto transport tracking. Temperature maintained at optimal levels.", status: "In Transit", active: true, icon: Truck 
+  {
+    id: 3, stage: "Secure Transit", location: "KrishiSetu Freight Fleet", date: "Mar 22, 11:15 AM",
+    details: "Loaded onto transport tracking. Temperature maintained at optimal levels.", status: "In Transit", active: true, icon: Truck
   },
-  { 
-    id: 4, stage: "Buyer Received", location: "Punjab Agro Facility", date: "Pending", 
-    details: "Awaiting final scan by the buyer to release escrow payment.", status: "Awaiting", active: false, icon: Store 
+  {
+    id: 4, stage: "Buyer Received", location: "Punjab Agro Facility", date: "Pending",
+    details: "Awaiting final scan by the buyer to release escrow payment.", status: "Awaiting", active: false, icon: Store
   }
 ];
 
@@ -110,7 +110,7 @@ export default function TradeHistoryPage() {
 
   return (
     <div className="min-h-screen p-4 md:p-8 relative z-10 w-full animate-fade-in pb-24">
-      
+
       {/* HEADER */}
       <header className="mb-10">
         <h1 className="text-3xl md:text-4xl font-black text-[#0A2F1D] mb-1 drop-shadow-sm flex items-center gap-3">
@@ -130,7 +130,7 @@ export default function TradeHistoryPage() {
             placeholder="Search by Order ID (e.g., ORD-8821)"
             className="w-full bg-transparent text-[#0A2F1D] px-2 py-3 outline-none placeholder-[#8A9A90] font-bold text-base"
           />
-          <button 
+          <button
             onClick={() => setActiveTimeline(searchId || "ORD-8821")}
             className="bg-[#10893E] hover:bg-[#0A2F1D] text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-colors shadow-sm"
           >
@@ -156,7 +156,7 @@ export default function TradeHistoryPage() {
                   </div>
                   <div>
                     <h3 className="font-black text-lg text-[#0A2F1D] flex items-center gap-2">
-                       ORD-{trade.id.toString().substring(0, 5).toUpperCase()} <CheckCircle2 className="w-4 h-4 text-[#10893E]"/>
+                      ORD-{trade.id.toString().substring(0, 5).toUpperCase()} <CheckCircle2 className="w-4 h-4 text-[#10893E]" />
                     </h3>
                     <p className="text-sm font-bold text-[#627768]">Successfully traded {trade.crop} on {new Date(trade.date).toLocaleDateString()}</p>
                   </div>
@@ -169,7 +169,7 @@ export default function TradeHistoryPage() {
                   <p className="text-xs font-bold text-[#8A9A90] uppercase mb-1">Status</p>
                   <p className="text-xl font-black text-[#10893E]">Completed</p>
                 </div>
-                <button 
+                <button
                   onClick={() => setActiveTimeline(`ORD-` + trade.id.toString().substring(0, 5).toUpperCase())}
                   className="w-full md:w-auto py-3 px-6 bg-white border border-[#EBE5D9] text-[#0A2F1D] rounded-xl font-bold shadow-sm hover:bg-[#FDF8EE] transition-colors mt-2 md:mt-0"
                 >
@@ -186,7 +186,7 @@ export default function TradeHistoryPage() {
               <h2 className="text-2xl font-black text-[#0A2F1D]">Trade Receipt: {activeTimeline}</h2>
               <p className="text-[#10893E] font-bold text-sm uppercase tracking-widest mt-1">Smart Contract Settled</p>
             </div>
-            <button 
+            <button
               onClick={() => setActiveTimeline(null)}
               className="text-sm font-bold text-[#627768] hover:text-[#0A2F1D] flex items-center gap-1 bg-white/50 px-4 py-2 rounded-lg"
             >

@@ -69,7 +69,7 @@ export default function FarmerDashboardOverview() {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pb-20">
         
         {/* STAT CARD 1 */}
-        <div className={`md:col-span-4 bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-3xl group hover:shadow-md transition-all duration-200 transform ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+        <div className={`md:col-span-6 bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-3xl group hover:shadow-md transition-all duration-200 transform ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
           <div className="flex justify-between items-start mb-4">
             <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#10893E] flex items-center justify-center text-2xl group-hover:scale-110 transition-all duration-200">🌾</div>
             <span className="text-sm font-bold text-[#10893E] bg-emerald-50 px-2.5 py-1 rounded-lg">▲ +12.5%</span>
@@ -79,32 +79,13 @@ export default function FarmerDashboardOverview() {
         </div>
 
         {/* STAT CARD 2 */}
-        <div className={`md:col-span-4 bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-3xl group hover:shadow-md transition-all duration-200 transform ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+        <div className={`md:col-span-6 bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-3xl group hover:shadow-md transition-all duration-200 transform ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
           <div className="flex justify-between items-start mb-4">
             <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-all duration-200">👀</div>
             <span className="text-sm font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg">High Demand</span>
           </div>
           <p className="text-[#627768] font-bold text-sm uppercase tracking-wide">Interested Buyers</p>
           <h2 className="text-4xl font-black text-[#0A2F1D] mt-1 tracking-tight">24 Active</h2>
-        </div>
-
-        {/* 3D CHUNKY ACTION CARD: AI Quick Scan */}
-        <div className={`md:col-span-4 bg-gradient-to-b from-[#14A049] to-[#0A2F1D] p-6 rounded-3xl text-white shadow-[0_10px_0_0_#062013,0_20px_40px_rgba(10,47,29,0.4)] hover:shadow-[0_4px_0_0_#062013,0_15px_30px_rgba(10,47,29,0.6)] hover:translate-y-[6px] relative overflow-hidden group transition-all duration-200 transform cursor-pointer ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-          <span className="absolute inset-0 w-full h-full -translate-x-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-[150%] transition-transform duration-700 ease-out z-0"></span>
-          <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-[#FBC02D] rounded-full mix-blend-screen filter blur-[40px] opacity-40 group-hover:opacity-80 group-hover:scale-125 transition-all duration-300"></div>
-          
-          <div className="relative z-10 flex items-center justify-between mb-2">
-            <h3 className="text-xl font-black drop-shadow-md">AI Market Scan</h3>
-            <span className="text-3xl drop-shadow-lg transform group-hover:scale-110 transition-transform duration-200">🤖</span>
-          </div>
-          <p className="text-green-100 text-sm font-medium mb-5 relative z-10 drop-shadow-sm">Wheat prices peaking in 4 days.</p>
-          
-          <Link href="/farmer-dashboard/ai-advisor">
-            <button className="w-full py-3 bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] rounded-xl font-bold text-white transition-colors duration-150 relative z-10 flex items-center justify-center">
-              Run Full Analysis 
-              <span className="ml-2 inline-block transform group-hover:translate-x-1.5 transition-transform duration-200">→</span>
-            </button>
-          </Link>
         </div>
 
         {/* --- LARGE AI CHART WIDGET --- */}

@@ -44,7 +44,7 @@ export default function MyRequestsPage() {
           </h1>
           <p className="text-[#627768] font-medium">Manage your active broadcasts requesting commodities from verified Farmers.</p>
         </div>
-        
+
         <div className="mt-4 md:mt-0">
           <Link href="/buyer-dashboard/new-request">
             <button className="bg-[#10893E] text-white px-6 py-3 rounded-xl font-bold shadow-[0_6px_0_0_#0D7334] hover:shadow-[0_2px_0_0_#0D7334] hover:translate-y-[4px] active:translate-y-[6px] transition-all flex items-center gap-2">
@@ -57,16 +57,16 @@ export default function MyRequestsPage() {
       {/* REQUESTS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading ? (
-           <p className="text-[#627768] font-bold">Loading your requests...</p>
+          <p className="text-[#627768] font-bold">Loading your requests...</p>
         ) : myRequests.length === 0 ? (
-           <div className="col-span-full py-16 text-center bg-white/50 border border-white rounded-[2rem] shadow-sm">
-             <span className="text-5xl text-gray-300">📢</span>
-             <h3 className="text-xl font-black text-[#0A2F1D] mt-4">No Requests Found</h3>
-             <p className="text-[#627768] mt-2 mb-6">You haven't broadcasted any commodity requests yet.</p>
-             <Link href="/buyer-dashboard/new-request" className="inline-block text-[#10893E] font-bold hover:underline">
-               Create your first request →
-             </Link>
-           </div>
+          <div className="col-span-full py-16 text-center bg-white/50 border border-white rounded-[2rem] shadow-sm">
+            <span className="text-5xl text-gray-300">📢</span>
+            <h3 className="text-xl font-black text-[#0A2F1D] mt-4">No Requests Found</h3>
+            <p className="text-[#627768] mt-2 mb-6">You haven't broadcasted any commodity requests yet.</p>
+            <Link href="/buyer-dashboard/new-request" className="inline-block text-[#10893E] font-bold hover:underline">
+              Create your first request →
+            </Link>
+          </div>
         ) : (
           myRequests.map((item: any) => (
             <div key={item.id} className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(10,47,29,0.08)] transition-all duration-300 flex flex-col justify-between">
@@ -79,7 +79,7 @@ export default function MyRequestsPage() {
                     <h3 className="text-2xl font-black text-[#0A2F1D] mt-2">{item.crop}</h3>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="bg-[#FDF8EE] p-3 rounded-xl border border-[#E2DFD3]">
                     <p className="text-[10px] font-bold text-[#8A9A90] uppercase tracking-wider">Demanding</p>

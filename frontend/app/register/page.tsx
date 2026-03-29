@@ -149,8 +149,8 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => setRole('farmer')}
                 className={`py-3 px-4 rounded-xl border-2 font-bold transition-all duration-200 flex items-center justify-center ${role === 'farmer'
-                    ? 'border-[#10893E] bg-[#E9F3E8] text-[#10893E] shadow-sm border-b-[4px]'
-                    : 'border-[#E2DFD3] bg-[#FDF8EE] text-[#627768] hover:border-[#BDE0B8] hover:-translate-y-[2px] border-b-[4px]'
+                  ? 'border-[#10893E] bg-[#E9F3E8] text-[#10893E] shadow-sm border-b-[4px]'
+                  : 'border-[#E2DFD3] bg-[#FDF8EE] text-[#627768] hover:border-[#BDE0B8] hover:-translate-y-[2px] border-b-[4px]'
                   }`}
               >
                 <span className="mr-2 text-xl">🌾</span> Sell Crops
@@ -159,8 +159,8 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => setRole('buyer')}
                 className={`py-3 px-4 rounded-xl border-2 font-bold transition-all duration-200 flex items-center justify-center ${role === 'buyer'
-                    ? 'border-[#FBC02D] bg-[#FFF9E6] text-[#D49800] shadow-sm border-b-[4px]'
-                    : 'border-[#E2DFD3] bg-[#FDF8EE] text-[#627768] hover:border-[#FDE08B] hover:-translate-y-[2px] border-b-[4px]'
+                  ? 'border-[#FBC02D] bg-[#FFF9E6] text-[#D49800] shadow-sm border-b-[4px]'
+                  : 'border-[#E2DFD3] bg-[#FDF8EE] text-[#627768] hover:border-[#FDE08B] hover:-translate-y-[2px] border-b-[4px]'
                   }`}
               >
                 <span className="mr-2 text-xl">🤝</span> Buy Crops

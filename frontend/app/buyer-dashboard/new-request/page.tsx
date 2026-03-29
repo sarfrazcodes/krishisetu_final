@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
+import {
   ArrowLeft, Megaphone, MapPin, Calendar, Scale, IndianRupee, Sprout, Building2
 } from "lucide-react";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 export default function NewRequirementPage() {
   const [mounted, setMounted] = useState(false);
-  
+
   // Form State
   const [crop, setCrop] = useState("Wheat (Lok-1)");
   const [quantity, setQuantity] = useState("100");
@@ -27,7 +27,7 @@ export default function NewRequirementPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
-    
+
     if (!crop || !quantity || !location) {
       setErrorMsg("Please fill all required fields.");
       return;
@@ -64,7 +64,7 @@ export default function NewRequirementPage() {
 
   return (
     <main className="p-4 md:p-8 relative z-10 w-full animate-fade-in pb-24">
-      
+
       {/* HEADER SECTION */}
       <div className="max-w-6xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
@@ -80,20 +80,20 @@ export default function NewRequirementPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          
+
           {/* LEFT COLUMN: THE FORM */}
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 md:p-8 rounded-[2rem] shadow-lg">
               <h2 className="text-xl font-black text-[#0A2F1D] mb-4">Requirement Details</h2>
               {errorMsg && <div className="mb-4 text-sm font-bold text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{errorMsg}</div>}
-              
+
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Crop Selection */}
                 <div>
                   <label className="block text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-2">Commodity Type</label>
                   <div className="relative">
                     <Sprout className="absolute left-4 top-1/2 -translate-y-1/2 text-[#10893E] w-5 h-5" />
-                    <select 
+                    <select
                       value={crop}
                       onChange={(e) => setCrop(e.target.value)}
                       className="w-full pl-12 pr-4 py-4 bg-white/60 border border-white/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#10893E] text-[#0A2F1D] font-bold shadow-inner transition-colors appearance-none"
@@ -113,11 +113,11 @@ export default function NewRequirementPage() {
                     <label className="block text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-2">Required Quantity</label>
                     <div className="relative">
                       <Scale className="absolute left-4 top-1/2 -translate-y-1/2 text-[#10893E] w-5 h-5" />
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
-                        placeholder="e.g. 100" 
+                        placeholder="e.g. 100"
                         className="w-full pl-12 pr-16 py-4 bg-white/60 border border-white/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#10893E] text-[#0A2F1D] font-bold shadow-inner transition-colors"
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8A9A90] font-bold">Quintals</span>
@@ -129,11 +129,11 @@ export default function NewRequirementPage() {
                     <label className="block text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-2">Target Price (Per Quintal)</label>
                     <div className="relative">
                       <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 text-[#10893E] w-5 h-5" />
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
-                        placeholder="e.g. 2400" 
+                        placeholder="e.g. 2400"
                         className="w-full pl-12 pr-4 py-4 bg-white/60 border border-white/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#10893E] text-[#0A2F1D] font-bold shadow-inner transition-colors"
                       />
                     </div>
@@ -145,11 +145,11 @@ export default function NewRequirementPage() {
                   <label className="block text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-2">Delivery Location</label>
                   <div className="relative">
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-[#10893E] w-5 h-5" />
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      placeholder="e.g. Ludhiana, Punjab" 
+                      placeholder="e.g. Ludhiana, Punjab"
                       className="w-full pl-12 pr-4 py-4 bg-white/60 border border-white/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#10893E] text-[#0A2F1D] font-bold shadow-inner transition-colors"
                     />
                   </div>
@@ -160,26 +160,25 @@ export default function NewRequirementPage() {
                   <label className="block text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-2">Required By</label>
                   <div className="relative">
                     <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-[#10893E] w-5 h-5" />
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={deadline}
                       onChange={(e) => setDeadline(e.target.value)}
-                      placeholder="e.g. Within 7 Days" 
+                      placeholder="e.g. Within 7 Days"
                       className="w-full pl-12 pr-4 py-4 bg-white/60 border border-white/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#10893E] text-[#0A2F1D] font-bold shadow-inner transition-colors"
                     />
                   </div>
                 </div>
-                
+
               </form>
             </div>
 
             {/* Submit Button */}
-            <button 
+            <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className={`w-full py-5 text-white rounded-[1.5rem] font-black text-lg transition-all duration-150 flex items-center justify-center gap-2 ${
-                isSubmitting ? "bg-gray-400 cursor-not-allowed opacity-80" : "bg-gradient-to-b from-[#14A049] to-[#10893E] shadow-[0_8px_0_0_#0D7334,0_15px_30px_rgba(16,137,62,0.4)] hover:shadow-[0_4px_0_0_#0D7334,0_15px_30px_rgba(16,137,62,0.5)] hover:translate-y-[4px] active:translate-y-[8px] active:shadow-none"
-              }`}
+              className={`w-full py-5 text-white rounded-[1.5rem] font-black text-lg transition-all duration-150 flex items-center justify-center gap-2 ${isSubmitting ? "bg-gray-400 cursor-not-allowed opacity-80" : "bg-gradient-to-b from-[#14A049] to-[#10893E] shadow-[0_8px_0_0_#0D7334,0_15px_30px_rgba(16,137,62,0.4)] hover:shadow-[0_4px_0_0_#0D7334,0_15px_30px_rgba(16,137,62,0.5)] hover:translate-y-[4px] active:translate-y-[8px] active:shadow-none"
+                }`}
             >
               {isSubmitting ? "Broadcasting..." : "Broadcast to Farmers 📡"}
             </button>
@@ -190,11 +189,11 @@ export default function NewRequirementPage() {
             <h2 className="text-sm font-bold tracking-wider text-[#10893E] uppercase mb-4 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Live Preview
             </h2>
-            
+
             {/* The Farmer's View Card */}
             <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] border-t-4 border-t-[#10893E] shadow-[0_20px_40px_rgba(10,47,29,0.1)] opacity-90 scale-95 origin-top relative overflow-hidden pointer-events-none">
               <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px] z-20"></div> {/* Gives it a "preview" feel */}
-              
+
               <div className="relative z-10">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center space-x-3">
@@ -207,10 +206,10 @@ export default function NewRequirementPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs font-bold text-[#627768] bg-white/80 px-2 py-1 rounded-md shadow-sm flex items-center gap-1"><MapPin className="w-3 h-3"/> ~ km</span>
+                    <span className="text-xs font-bold text-[#627768] bg-white/80 px-2 py-1 rounded-md shadow-sm flex items-center gap-1"><MapPin className="w-3 h-3" /> ~ km</span>
                   </div>
                 </div>
-                
+
                 <div className="my-5 p-4 bg-[#10893E] rounded-2xl shadow-inner text-white">
                   <p className="text-xs font-bold text-green-200 uppercase tracking-wider mb-1">Looking For Urgent Delivery</p>
                   <div className="flex items-center space-x-2">

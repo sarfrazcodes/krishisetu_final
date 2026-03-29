@@ -32,11 +32,11 @@ function linearRegressionForecast(prices: number[]): number {
   if (prices.length < 2) return prices[0] || 0;
   const n = prices.length;
   const x = Array.from({ length: n }, (_, i) => i);
-  const sumX  = x.reduce((a, b) => a + b, 0);
-  const sumY  = prices.reduce((a, b) => a + b, 0);
+  const sumX = x.reduce((a, b) => a + b, 0);
+  const sumY = prices.reduce((a, b) => a + b, 0);
   const sumXY = x.reduce((sum, v, i) => sum + v * prices[i], 0);
   const sumXX = x.reduce((sum, v) => sum + v * v, 0);
-  const slope     = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
   const intercept = (sumY - slope * sumX) / n;
   return intercept + slope * n;
 }
@@ -56,9 +56,9 @@ function formatDate(dateStr: string): string {
 }
 
 function getVolatilityStyle(label: string) {
-  if (label === "High")     return { bar: "bg-red-500",    text: "text-red-600 bg-red-50 border-red-200",       width: "85%" };
+  if (label === "High") return { bar: "bg-red-500", text: "text-red-600 bg-red-50 border-red-200", width: "85%" };
   if (label === "Moderate") return { bar: "bg-yellow-500", text: "text-yellow-700 bg-yellow-50 border-yellow-200", width: "50%" };
-  return                           { bar: "bg-green-500",  text: "text-green-700 bg-green-50 border-green-200",  width: "20%" };
+  return { bar: "bg-green-500", text: "text-green-700 bg-green-50 border-green-200", width: "20%" };
 }
 
 function getRecStyle(action: string) {
@@ -102,29 +102,29 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
       fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/history`).then(r => r.json()),
       fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/predict?mandi=${encodeURIComponent(mandiId)}`).then(r => r.json())
     ])
-    .then(([histData, predData]) => {
-      setHistory(histData.history || []);
-      setPrediction(predData);
-      setLoading(false);
+      .then(([histData, predData]) => {
+        setHistory(histData.history || []);
+        setPrediction(predData);
+        setLoading(false);
 
-      // 2. Poll the LLM Engine separately so the UI doesn't lock for 5 seconds
-      const w = predData.weather || { temp: 28, rainProbability: 20, description: "Clear" };
-      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/advisory?mandi=${encodeURIComponent(mandiId)}&temp=${w.temp}&rain=${w.rainProbability}&desc=${w.description}`)
-        .then(r => r.json())
-        .then(adv => setWeatherAdvisory(adv.instruction))
-        .catch(err => {
-          if (err instanceof Error && err.message === "Failed to fetch") return;
+        // 2. Poll the LLM Engine separately so the UI doesn't lock for 5 seconds
+        const w = predData.weather || { temp: 28, rainProbability: 20, description: "Clear" };
+        fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/advisory?mandi=${encodeURIComponent(mandiId)}&temp=${w.temp}&rain=${w.rainProbability}&desc=${w.description}`)
+          .then(r => r.json())
+          .then(adv => setWeatherAdvisory(adv.instruction))
+          .catch(err => {
+            if (err instanceof Error && err.message === "Failed to fetch") return;
+            console.error(err);
+          });
+      })
+      .catch(err => {
+        if (err instanceof Error && err.message === "Failed to fetch") {
+          console.warn("Network offline simulation blocked the fetch request.");
+        } else {
           console.error(err);
-        });
-    })
-    .catch(err => {
-      if (err instanceof Error && err.message === "Failed to fetch") {
-         console.warn("Network offline simulation blocked the fetch request.");
-      } else {
-         console.error(err);
-      }
-      setLoading(false);
-    });
+        }
+        setLoading(false);
+      });
   }, [cropId, mandiId]);
 
   if (loading) {
@@ -137,7 +137,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
             <MapPin className="absolute w-8 h-8 text-[#10893E]" />
           </div>
           <h3 className="text-xl font-black text-[#0A2F1D] tracking-wide">
-             {t('Aggregating AI Diagnostics...')}
+            {t('Aggregating AI Diagnostics...')}
           </h3>
           <p className="text-sm font-bold text-[#8A9A90] uppercase tracking-widest">
             {t('Cross-checking ')} {mandiId} {t('weather systems')}
@@ -149,8 +149,8 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
 
   // 1. DATA MAPPING
   const COMMODITY_NAME = prediction?.crop || cropId;
-  const MANDI_NAME     = mandiId;
-  const LAST_UPDATED   = history.length > 0 ? history[history.length - 1].date : new Date().toISOString();
+  const MANDI_NAME = mandiId;
+  const LAST_UPDATED = history.length > 0 ? history[history.length - 1].date : new Date().toISOString();
 
   let priceRows: PriceRow[] = history.map(h => ({
     modal_price: h.price,
@@ -162,73 +162,73 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
 
   // Fallback if no history
   if (priceRows.length === 0) {
-     const cp = prediction?.current_price || 2000;
-     priceRows = [{ modal_price: cp, min_price: cp * 0.95, max_price: cp * 1.05, arrival_quantity: null, date: LAST_UPDATED }];
+    const cp = prediction?.current_price || 2000;
+    priceRows = [{ modal_price: cp, min_price: cp * 0.95, max_price: cp * 1.05, arrival_quantity: null, date: LAST_UPDATED }];
   }
 
-  const prices       = priceRows.map(r => r.modal_price);
-  const latestRow    = priceRows[priceRows.length - 1];
+  const prices = priceRows.map(r => r.modal_price);
+  const latestRow = priceRows[priceRows.length - 1];
   const currentPrice = prediction?.current_price || latestRow.modal_price;
-  const currentMin   = latestRow.min_price;
-  const currentMax   = latestRow.max_price;
-  const currentQty   = latestRow.arrival_quantity;
+  const currentMin = latestRow.min_price;
+  const currentMax = latestRow.max_price;
+  const currentQty = latestRow.arrival_quantity;
 
   // Use the backend's real prediction or fallback to regression
-  const predictedPrice  = prediction?.predicted_price_weekly || (prices.length > 1 ? linearRegressionForecast(prices) : currentPrice);
-  const expectedGain    = predictedPrice - currentPrice;
+  const predictedPrice = prediction?.predicted_price_weekly || (prices.length > 1 ? linearRegressionForecast(prices) : currentPrice);
+  const expectedGain = predictedPrice - currentPrice;
   const expectedGainPct = currentPrice > 0 ? ((expectedGain / currentPrice) * 100).toFixed(1) : "0.0";
 
-  const avg             = prices.reduce((a, b) => a + b, 0) / prices.length;
-  const variance        = prices.reduce((sum, p) => sum + Math.pow(p - avg, 2), 0) / prices.length;
-  const volatility      = Math.sqrt(variance);
-  const volatilityPct   = avg > 0 ? (volatility / avg) * 100 : 0;
+  const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+  const variance = prices.reduce((sum, p) => sum + Math.pow(p - avg, 2), 0) / prices.length;
+  const volatility = Math.sqrt(variance);
+  const volatilityPct = avg > 0 ? (volatility / avg) * 100 : 0;
   // Increased agricultural threshold to avoid false 'High Risk' flags on standard intra-week 5-15% variance
   const volatilityLabel = volatilityPct > 25 ? "High" : volatilityPct > 10 ? "Moderate" : "Low";
 
   // Calculate prediction trend mapping accurately against expected gain
-  const trend      = expectedGain > 0 ? "up" : expectedGain < 0 ? "down" : "flat";
-  const trendIcon  = trend === "up" ? "↑" : trend === "down" ? "↓" : "→";
+  const trend = expectedGain > 0 ? "up" : expectedGain < 0 ? "down" : "flat";
+  const trendIcon = trend === "up" ? "↑" : trend === "down" ? "↓" : "→";
   const trendColor = trend === "up" ? "text-emerald-600" : trend === "down" ? "text-red-500" : "text-slate-500";
   const trendLabel = trend === "up" ? "Rising" : trend === "down" ? "Falling" : "Stable";
-  const trendBg    = trend === "up" ? "bg-emerald-50 text-emerald-700" : trend === "down" ? "bg-red-50 text-red-600" : "bg-slate-100 text-slate-600";
+  const trendBg = trend === "up" ? "bg-emerald-50 text-emerald-700" : trend === "down" ? "bg-red-50 text-red-600" : "bg-slate-100 text-slate-600";
 
   let chartData: any[] = [];
   if (priceRows.length <= 1 && prediction) {
-      const cp = currentPrice;
-      const tom = prediction?.predicted_price || Math.round(cp * 1.02);
-      const wk = Math.round(predictedPrice);
-      chartData = [
-         { date: "Current", price: cp, forecast: cp },
-         { date: "Tomorrow", price: undefined, forecast: tom },
-         { date: "Day 3", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.4)) },
-         { date: "Day 5", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.7)) },
-         { date: "7-Days", price: undefined, forecast: wk },
-      ];
+    const cp = currentPrice;
+    const tom = prediction?.predicted_price || Math.round(cp * 1.02);
+    const wk = Math.round(predictedPrice);
+    chartData = [
+      { date: "Current", price: cp, forecast: cp },
+      { date: "Tomorrow", price: undefined, forecast: tom },
+      { date: "Day 3", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.4)) },
+      { date: "Day 5", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.7)) },
+      { date: "7-Days", price: undefined, forecast: wk },
+    ];
   } else {
-      chartData = priceRows.map((row, idx) => ({ 
-          date: formatDate(row.date), 
-          price: row.modal_price, 
-          forecast: (idx === priceRows.length - 1) ? row.modal_price : undefined 
-      }));
-      chartData.push({ 
-          date: "Tomorrow", 
-          price: undefined, 
-          forecast: Math.round(prediction?.predicted_price || currentPrice)
-      });
-      chartData.push({ 
-          date: "7-Days", 
-          price: undefined, 
-          forecast: Math.round(predictedPrice) 
-      });
+    chartData = priceRows.map((row, idx) => ({
+      date: formatDate(row.date),
+      price: row.modal_price,
+      forecast: (idx === priceRows.length - 1) ? row.modal_price : undefined
+    }));
+    chartData.push({
+      date: "Tomorrow",
+      price: undefined,
+      forecast: Math.round(prediction?.predicted_price || currentPrice)
+    });
+    chartData.push({
+      date: "7-Days",
+      price: undefined,
+      forecast: Math.round(predictedPrice)
+    });
   }
 
   const AI_REC = prediction?.recommendation || { action: "WAIT", text: "Analyzing market conditions..." };
-  const recStyle  = getRecStyle(AI_REC.action);
-  const volStyle  = getVolatilityStyle(volatilityLabel);
+  const recStyle = getRecStyle(AI_REC.action);
+  const volStyle = getVolatilityStyle(volatilityLabel);
 
   let confidenceScore = 78 + Math.min(prices.length * 0.8, 10) - Math.min(volatilityPct * 0.3, 8);
   if (prediction?.model_used?.includes("xgb")) confidenceScore += 7;
-  const confidence    = Math.round(Math.max(82, Math.min(95, confidenceScore)));
+  const confidence = Math.round(Math.max(82, Math.min(95, confidenceScore)));
 
   const WEATHER = prediction?.weather || { temp: 28, rainProbability: 20, description: "Unknown" };
 
@@ -255,7 +255,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
         <div className="relative rounded-[2rem] bg-gradient-to-br from-[#177A3C] via-[#106630] to-[#0A3819] p-8 md:p-10 shadow-2xl overflow-hidden mt-4">
           {/* Subtle noise/texture overlay for premium banking feel */}
           <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10">
             <div>
               <div className="flex items-center gap-2 text-[#FBC02D] mb-3">
@@ -265,19 +265,19 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight drop-shadow-lg tracking-tight">
                 {COMMODITY_NAME} — {MANDI_NAME}
               </h1>
-              
+
               <div className="mt-8 flex items-center gap-4">
-                 <div className="hidden md:flex items-center gap-3">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#10893E] bg-[#EAF8ED] px-3 py-1.5 rounded-full">
-                      ml model: xg
-                    </span>
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${trend === "up" ? "bg-emerald-400 text-emerald-900" : trend === "down" ? "bg-red-400 text-red-900" : "bg-slate-300 text-slate-800"}`}>
-                      {trendIcon} {trend === "up" ? "Rise" : trend === "down" ? "Fall" : "Stable"} (Predicted after 7 days)
-                    </span>
-                 </div>
+                <div className="hidden md:flex items-center gap-3">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#10893E] bg-[#EAF8ED] px-3 py-1.5 rounded-full">
+                    ml model: xg
+                  </span>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${trend === "up" ? "bg-emerald-400 text-emerald-900" : trend === "down" ? "bg-red-400 text-red-900" : "bg-slate-300 text-slate-800"}`}>
+                    {trendIcon} {trend === "up" ? "Rise" : trend === "down" ? "Fall" : "Stable"} (Predicted after 7 days)
+                  </span>
+                </div>
               </div>
             </div>
-            
+
             <div className="text-left md:text-right mt-6 md:mt-0">
               <span className="text-white/80 font-bold text-sm tracking-wide block mb-1">Today's Mandi Price</span>
               <div className="flex items-baseline justify-start md:justify-end gap-1">
@@ -319,19 +319,19 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
           {/* AI Targets */}
           <div className="bg-white p-4 lg:p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center">
             <div className="flex justify-between items-center mb-2">
-               <div>
-                  <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Tomorrow</p>
-                  <h2 className={`text-lg lg:text-xl font-extrabold ${(prediction?.predicted_price || currentPrice) >= currentPrice ? "text-emerald-600" : "text-red-500"}`}>
-                    ₹{Math.round(prediction?.predicted_price || currentPrice)}
-                  </h2>
-               </div>
-               <div className="h-8 w-[1px] bg-slate-200 mx-2"></div>
-               <div className="text-right">
-                  <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">7-Days</p>
-                  <h2 className={`text-lg lg:text-xl font-extrabold ${expectedGain >= 0 ? "text-emerald-600" : "text-red-500"}`}>
-                    ₹{Math.abs(predictedPrice).toFixed(0)}
-                  </h2>
-               </div>
+              <div>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Tomorrow</p>
+                <h2 className={`text-lg lg:text-xl font-extrabold ${(prediction?.predicted_price || currentPrice) >= currentPrice ? "text-emerald-600" : "text-red-500"}`}>
+                  ₹{Math.round(prediction?.predicted_price || currentPrice)}
+                </h2>
+              </div>
+              <div className="h-8 w-[1px] bg-slate-200 mx-2"></div>
+              <div className="text-right">
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">7-Days</p>
+                <h2 className={`text-lg lg:text-xl font-extrabold ${expectedGain >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                  ₹{Math.abs(predictedPrice).toFixed(0)}
+                </h2>
+              </div>
             </div>
           </div>
 
@@ -421,9 +421,9 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
               <h4 className="font-bold text-slate-800 text-sm mb-4">📊 Price Breakdown</h4>
               <div className="space-y-3">
                 {[
-                  { label: "Modal Price", value: `₹${currentPrice.toLocaleString("en-IN")}`,  color: "text-slate-900" },
-                  { label: "Min Est.",   value: `₹${currentMin.toLocaleString("en-IN")}`,    color: "text-blue-600"  },
-                  { label: "Max Est.",   value: `₹${currentMax.toLocaleString("en-IN")}`,    color: "text-emerald-600" },
+                  { label: "Modal Price", value: `₹${currentPrice.toLocaleString("en-IN")}`, color: "text-slate-900" },
+                  { label: "Min Est.", value: `₹${currentMin.toLocaleString("en-IN")}`, color: "text-blue-600" },
+                  { label: "Max Est.", value: `₹${currentMax.toLocaleString("en-IN")}`, color: "text-emerald-600" },
                   { label: "Arrival Qty", value: currentQty !== null ? `${currentQty?.toLocaleString("en-IN")} q` : "Pending", color: "text-slate-600" },
                 ].map(item => (
                   <div key={item.label} className="flex justify-between items-center">
@@ -439,9 +439,9 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
               <h4 className="font-bold text-slate-800 text-sm mb-4">⚡ Market Risk Index</h4>
               <div className="space-y-3">
                 {[
-                  { label: "Volatility Score", value: volatility.toFixed(1),    valueClass: "text-slate-800 font-bold text-sm" },
-                  { label: "Avg Price",         value: `₹${avg.toFixed(0)}`,    valueClass: "text-slate-700 font-bold text-sm" },
-                  { label: "Price Direction",   value: `${trendIcon} ${trendLabel}`, valueClass: `font-bold text-sm ${trendColor}` },
+                  { label: "Volatility Score", value: volatility.toFixed(1), valueClass: "text-slate-800 font-bold text-sm" },
+                  { label: "Avg Price", value: `₹${avg.toFixed(0)}`, valueClass: "text-slate-700 font-bold text-sm" },
+                  { label: "Price Direction", value: `${trendIcon} ${trendLabel}`, valueClass: `font-bold text-sm ${trendColor}` },
                 ].map(item => (
                   <div key={item.label} className="flex justify-between items-center">
                     <span className="text-xs text-slate-400 font-semibold">{item.label}</span>
@@ -503,11 +503,11 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
               <div>
                 <h4 className="text-sm font-bold text-[#0A2F1D] mb-1">KrishiSetu Weather Instruction</h4>
                 <p className="text-sm font-medium text-[#2D503C] leading-snug">
-                   {weatherAdvisory || (
-                     <span className="flex items-center gap-2 animate-pulse text-[#8A9A90]">
-                        <Activity className="w-3 h-3" /> Fetching real-time geospatial Gemini climate instruction...
-                     </span>
-                   )}
+                  {weatherAdvisory || (
+                    <span className="flex items-center gap-2 animate-pulse text-[#8A9A90]">
+                      <Activity className="w-3 h-3" /> Fetching real-time geospatial Gemini climate instruction...
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
@@ -533,7 +533,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
                   {expectedGain >= 0 ? "+" : "−"}₹{Math.abs(expectedGain).toFixed(0)}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-1 leading-tight font-medium">
-                  {expectedGain >= 0 ? "Expected gain" : "Expected loss"} per quintal <br/>
+                  {expectedGain >= 0 ? "Expected gain" : "Expected loss"} per quintal <br />
                   <span className="text-slate-400">(after 7-days)</span>
                 </p>
               </div>

@@ -39,22 +39,22 @@ export default function MarketplacePage() {
           <h1 className="text-3xl md:text-4xl font-black text-[#0A2F1D] mb-1 drop-shadow-sm">Direct Marketplace</h1>
           <p className="text-[#627768] font-medium">Connect with verified buyers and negotiate better prices.</p>
         </div>
-        
+
         <div className="mt-4 md:mt-0 flex space-x-4 items-center">
-         <Link href="/farmer-dashboard/notifications">
-  <button className="bg-white border border-[#E2DFD3] shadow-sm p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(10,47,29,0.1)] transition-all duration-150 relative group">
-    {/* The Bell Icon */}
-    <span className="group-hover:rotate-12 transition-transform inline-block">🔔</span>
-    
-    {/* The Notification Dot (Gold #FBC02D) */}
-    <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#FBC02D] rounded-full shadow-[0_0_8px_#FBC02D] animate-pulse"></span>
-    
-    {/* Optional: Tooltip on hover */}
-    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-[#0A2F1D] text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-      View Alerts
-    </span>
-  </button>
-</Link>
+          <Link href="/farmer-dashboard/notifications">
+            <button className="bg-white border border-[#E2DFD3] shadow-sm p-3 rounded-xl text-xl hover:scale-110 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(10,47,29,0.1)] transition-all duration-150 relative group">
+              {/* The Bell Icon */}
+              <span className="group-hover:rotate-12 transition-transform inline-block">🔔</span>
+
+              {/* The Notification Dot (Gold #FBC02D) */}
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#FBC02D] rounded-full shadow-[0_0_8px_#FBC02D] animate-pulse"></span>
+
+              {/* Optional: Tooltip on hover */}
+              <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-[#0A2F1D] text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                View Alerts
+              </span>
+            </button>
+          </Link>
         </div>
       </header>
 
@@ -62,9 +62,9 @@ export default function MarketplacePage() {
       <div className={`bg-white border border-[#E2DFD3] shadow-sm p-4 rounded-2xl mb-8 flex flex-col md:flex-row gap-4 items-center justify-between transition-all duration-300 ease-out transform ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="flex-1 w-full relative">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl">🔍</span>
-          <input 
-            type="text" 
-            placeholder="Search for crops, buyers, or locations..." 
+          <input
+            type="text"
+            placeholder="Search for crops, buyers, or locations..."
             className="w-full pl-12 pr-4 py-3 bg-white/50 border border-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#10893E] text-[#0A2F1D] font-medium placeholder-[#8A9A90] shadow-inner transition-colors duration-150"
           />
         </div>
@@ -86,11 +86,11 @@ export default function MarketplacePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
-        
+
         {isLoading ? (
-           <p className="text-[#627768] font-bold">Loading buyer demands...</p>
+          <p className="text-[#627768] font-bold">Loading buyer demands...</p>
         ) : requests.length === 0 ? (
-           <p className="text-[#627768] font-bold">No active buyer requests available right now.</p>
+          <p className="text-[#627768] font-bold">No active buyer requests available right now.</p>
         ) : (
           requests.map((item: any) => (
             <div key={item.id} className={`bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem] group hover:-translate-y-2 hover:shadow-[0_25px_50px_rgba(10,47,29,0.15)] transition-all duration-200 transform flex flex-col justify-between ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
@@ -107,7 +107,7 @@ export default function MarketplacePage() {
                     <span className="text-xs font-bold text-[#627768] bg-white/80 px-2 py-1 rounded-md shadow-sm">📍 {item.location}</span>
                   </div>
                 </div>
-                
+
                 <div className="my-5 p-4 bg-white/60 rounded-2xl border border-white/80 shadow-inner group-hover:bg-white transition-colors duration-200">
                   <p className="text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-1">Looking For</p>
                   <div className="flex items-center space-x-2">
@@ -132,7 +132,7 @@ export default function MarketplacePage() {
                 <div className="flex flex-col text-sm">
                   <span className="font-bold text-[#0A2F1D] flex items-center gap-1">👤 Contact Buyer</span>
                 </div>
-                <Link 
+                <Link
                   href={`/farmer-dashboard/marketplace/accept-offer/${item.id}`}
                   className="w-1/2 text-center py-3 bg-gradient-to-b from-[#FCD14D] to-[#FBC02D] text-[#0A2F1D] rounded-xl font-black shadow-[0_6px_0_0_#D49800,0_10px_20px_rgba(251,192,45,0.3)] hover:shadow-[0_2px_0_0_#D49800,0_10px_20px_rgba(251,192,45,0.4)] hover:translate-y-[4px] active:translate-y-[6px] active:shadow-none transition-all duration-150 border border-[#F5B921]"
                 >
