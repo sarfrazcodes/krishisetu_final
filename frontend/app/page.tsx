@@ -401,7 +401,7 @@ export default function HomePage() {
           )}
 
           {!error && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 text-sm md:text-base">
               {isLoading
                 ? Array.from({ length: 8 }).map((_, index) => (
                   <div key={index} className="bg-white/40 backdrop-blur-md p-6 rounded-[1.5rem] border border-white/80 shadow-[0_4px_15px_rgba(10,47,29,0.02)] border-b-[4px] border-b-[#D6D0C4]/50 flex flex-col items-center text-center animate-pulse">

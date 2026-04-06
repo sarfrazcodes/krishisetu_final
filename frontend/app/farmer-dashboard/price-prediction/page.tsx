@@ -76,23 +76,25 @@ export default function PricePredictionPage() {
   const weather = prediction?.weather || { temp: 28, rainProbability: 20, description: "Unknown" };
 
   return (
-    <main className="p-4 md:p-8 relative z-10 w-full animate-fade-in pb-24">
+    <main className="p-4 md:p-8 relative z-10 w-full animate-fade-in pb-24 overflow-x-hidden">
       {/* HEADER */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+      <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-black text-[#0A2F1D] mb-1 drop-shadow-sm flex items-center gap-3">
-            <LineChart className="w-8 h-8 text-[#10893E]" /> Price Forecast Model
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#0A2F1D] mb-1 drop-shadow-sm flex items-center gap-2 md:gap-3">
+            <LineChart className="w-6 h-6 md:w-8 md:h-8 text-[#10893E]" /> Price Forecast Model
           </h1>
-          <p className="text-[#627768] font-medium">Real-time XGBoost trajectories running on live KrishiSetu APMC datasets.</p>
+          <p className="text-[#627768] font-medium text-sm md:text-base">Real-time XGBoost trajectories running on live datasets.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0">
-          <div className="bg-white px-4 py-3 rounded-xl border border-[#E2DFD3] shadow-sm flex items-center space-x-3">
-            <span className="text-lg">🌾</span>
+        {/* MOBILE OPTIMIZED DROPDOWNS */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          {/* Crop Selector */}
+          <div className="relative w-full sm:w-48">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base md:text-lg pointer-events-none">🌾</span>
             <select
               value={selectedCrop}
               onChange={(e) => setSelectedCrop(e.target.value)}
-              className="bg-transparent font-bold text-[#0A2F1D] focus:outline-none appearance-none cursor-pointer pr-4"
+              className="w-full pl-10 pr-8 py-3 bg-white border border-[#E2DFD3] rounded-xl font-bold text-[#0A2F1D] text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#10893E] appearance-none"
             >
               <option>Wheat (Lok-1)</option>
               <option>Basmati Rice</option>
@@ -101,60 +103,64 @@ export default function PricePredictionPage() {
               <option>Cotton</option>
               <option>Potato (Kufri)</option>
             </select>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[10px] md:text-xs text-[#8A9A90]">▼</span>
           </div>
-          <div className="bg-white px-4 py-3 rounded-xl border border-[#E2DFD3] shadow-sm flex items-center space-x-3">
-            <span className="text-lg">📍</span>
+
+          {/* Mandi Selector */}
+          <div className="relative w-full sm:w-48">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base md:text-lg pointer-events-none">📍</span>
             <select
               value={selectedMandi}
               onChange={(e) => setSelectedMandi(e.target.value)}
-              className="bg-transparent font-bold text-[#0A2F1D] focus:outline-none appearance-none cursor-pointer pr-4"
+              className="w-full pl-10 pr-8 py-3 bg-white border border-[#E2DFD3] rounded-xl font-bold text-[#0A2F1D] text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#10893E] appearance-none"
             >
               <option>Ludhiana APMC</option>
               <option>Khanna APMC</option>
               <option>Karnal Mandi</option>
               <option>Delhi Azadpur</option>
             </select>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[10px] md:text-xs text-[#8A9A90]">▼</span>
           </div>
         </div>
       </header>
 
       {/* GRAPH CONTAINER */}
-      <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 md:p-8 rounded-[2rem] mb-8 relative min-h-[450px]">
+      <div className="bg-white border border-[#E2DFD3] shadow-sm p-4 md:p-6 lg:p-8 rounded-2xl md:rounded-[2rem] mb-6 md:mb-8 relative min-h-[400px]">
         {loading && (
-          <div className="absolute inset-0 z-20 bg-white/50 backdrop-blur-sm flex items-center justify-center rounded-[2rem]">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#10893E]"></div>
+          <div className="absolute inset-0 z-20 bg-white/50 backdrop-blur-sm flex items-center justify-center rounded-2xl md:rounded-[2rem]">
+            <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-[#10893E]"></div>
           </div>
         )}
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 border-b border-[#0A2F1D]/5 pb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-4 border-b border-[#0A2F1D]/5 pb-4 md:pb-6">
           <div>
-            <h2 className="text-xl font-black text-[#0A2F1D] flex items-center gap-2 mb-1">
-              <Calendar className="w-5 h-5 text-[#10893E]" /> 30-Day Predictive Trajectory
+            <h2 className="text-lg md:text-xl font-black text-[#0A2F1D] flex items-center gap-2 mb-1">
+              <Calendar className="w-4 h-4 md:w-5 md:h-5 text-[#10893E]" /> 30-Day Predictive Trajectory
             </h2>
-            <p className="text-[#627768] font-bold text-sm">Dynamic historical API vs. AI Projection for {selectedMandi}</p>
+            <p className="text-[#627768] font-bold text-[10px] md:text-sm">Historical API vs. AI Projection for {selectedMandi}</p>
           </div>
-          <div className="bg-[#FDF8EE] border border-[#E2DFD3] p-4 rounded-xl text-right">
-            <p className="text-[#8A9A90] text-xs font-bold uppercase tracking-widest mb-1">Predicted 7-Day Target</p>
-            <span className={`block text-3xl font-black ${expectedGain >= 0 ? 'text-[#10893E]' : 'text-red-500'}`}>
-              ₹{forecastPrice.toLocaleString()}<span className="text-sm font-bold text-[#627768]">/q</span>
+          <div className="bg-[#FDF8EE] border border-[#E2DFD3] p-3 md:p-4 rounded-xl text-left sm:text-right w-full sm:w-auto">
+            <p className="text-[#8A9A90] text-[10px] md:text-xs font-bold uppercase tracking-widest mb-0.5 md:mb-1">Predicted 7-Day Target</p>
+            <span className={`block text-2xl md:text-3xl font-black ${expectedGain >= 0 ? 'text-[#10893E]' : 'text-red-500'}`}>
+              ₹{forecastPrice.toLocaleString()}<span className="text-xs md:text-sm font-bold text-[#627768]">/q</span>
             </span>
           </div>
         </div>
 
         {/* DYNAMIC RECHARTS GRAPH */}
-        <div className="w-full aspect-[2/1] md:aspect-[3/1] max-h-[350px] relative bg-[#061A10] rounded-2xl overflow-hidden shadow-inner border border-[#0A2F1D] p-4 md:p-6">
+        <div className="w-full h-56 sm:h-64 md:h-[350px] relative bg-[#061A10] rounded-xl md:rounded-2xl overflow-hidden shadow-inner border border-[#0A2F1D] p-2 md:p-6">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#10893E" strokeOpacity={0.15} />
-              <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#8A9A90", fontWeight: 500 }} dy={8} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#8A9A90", fontWeight: 500 }} tickFormatter={v => `₹${v}`} />
+              <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#8A9A90", fontWeight: 500 }} dy={8} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#8A9A90", fontWeight: 500 }} tickFormatter={v => `₹${v}`} />
               <Tooltip
                 formatter={(value: any) => [`₹${value?.toLocaleString("en-IN")}`, "Price"]}
-                contentStyle={{ borderRadius: "10px", border: "1px solid #10893E", backgroundColor: "#0A2F1D", color: "#fff", fontSize: "12px", fontWeight: 600 }}
+                contentStyle={{ borderRadius: "8px", border: "1px solid #10893E", backgroundColor: "#0A2F1D", color: "#fff", fontSize: "11px", fontWeight: 600 }}
                 itemStyle={{ color: "#FBC02D" }}
               />
-              <Line type="monotone" dataKey="price" stroke="#10893E" strokeWidth={3} dot={{ r: 4, fill: "#10893E", strokeWidth: 0 }} activeDot={{ r: 6 }} connectNulls={false} />
-              <Line type="monotone" dataKey="forecast" stroke="#FBC02D" strokeWidth={3} strokeDasharray="6 4" dot={{ r: 5, fill: "#FBC02D", strokeWidth: 0 }} connectNulls={false} />
+              <Line type="monotone" dataKey="price" stroke="#10893E" strokeWidth={2.5} dot={{ r: 3, fill: "#10893E", strokeWidth: 0 }} activeDot={{ r: 5 }} connectNulls={false} />
+              <Line type="monotone" dataKey="forecast" stroke="#FBC02D" strokeWidth={2.5} strokeDasharray="6 4" dot={{ r: 4, fill: "#FBC02D", strokeWidth: 0 }} connectNulls={false} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -162,42 +168,42 @@ export default function PricePredictionPage() {
 
       {/* MARKET DRIVERS DYNAMICALLY POPULATED */}
       <div>
-        <h2 className="text-xl font-black text-[#0A2F1D] mb-4">Live API Diagnostics</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <h2 className="text-lg md:text-xl font-black text-[#0A2F1D] mb-4">Live API Diagnostics</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
 
-          <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem]">
+          <div className="bg-white border border-[#E2DFD3] shadow-sm p-5 md:p-6 rounded-2xl md:rounded-[2rem] hover:-translate-y-1 transition-all">
             <div className="flex justify-between items-start mb-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl border border-blue-100">
-                <CloudRain className="w-6 h-6" />
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl md:text-2xl border border-blue-100">
+                <CloudRain className="w-5 h-5 md:w-6 md:h-6" />
               </div>
-              <span className="text-[10px] font-black text-blue-800 bg-blue-100 px-2 py-1 rounded shadow-sm uppercase tracking-wide">Weather State</span>
+              <span className="text-[8px] md:text-[10px] font-black text-blue-800 bg-blue-100 px-2 py-1 rounded shadow-sm uppercase tracking-wide">Weather State</span>
             </div>
-            <h3 className="font-bold text-[#0A2F1D] text-lg mb-2">{weather.description} ({weather.temp}°C)</h3>
-            <p className="text-sm font-medium text-[#627768]">Live conditions at {selectedMandi}. Current rain probability sits at {weather.rainProbability}% affecting logistics.</p>
+            <h3 className="font-bold text-[#0A2F1D] text-base md:text-lg mb-1 md:mb-2">{weather.description} ({weather.temp}°C)</h3>
+            <p className="text-[10px] md:text-xs font-medium text-[#627768]">Live conditions at {selectedMandi}. Current rain probability sits at {weather.rainProbability}% affecting logistics.</p>
           </div>
 
-          <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem]">
+          <div className="bg-white border border-[#E2DFD3] shadow-sm p-5 md:p-6 rounded-2xl md:rounded-[2rem] hover:-translate-y-1 transition-all">
             <div className="flex justify-between items-start mb-4">
-              <div className="w-12 h-12 rounded-xl bg-[#FDF8EE] text-[#FBC02D] flex items-center justify-center text-2xl border border-[#FDE08B]">
-                <Activity className="w-6 h-6 text-[#D49800]" />
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#FDF8EE] text-[#FBC02D] flex items-center justify-center text-xl md:text-2xl border border-[#FDE08B]">
+                <Activity className="w-5 h-5 md:w-6 md:h-6 text-[#D49800]" />
               </div>
-              <span className="text-[10px] font-black text-[#D49800] bg-[#FFF9E6] px-2 py-1 rounded shadow-sm uppercase tracking-wide">AI Recommendation</span>
+              <span className="text-[8px] md:text-[10px] font-black text-[#D49800] bg-[#FFF9E6] px-2 py-1 rounded shadow-sm uppercase tracking-wide">AI Insight</span>
             </div>
-            <h3 className="font-bold text-[#0A2F1D] text-lg mb-2">{prediction?.recommendation?.action || "Analyzing..."}</h3>
-            <p className="text-sm font-medium text-[#627768] line-clamp-3">{prediction?.recommendation?.text || "Evaluating market conditions via historical trajectory."}</p>
+            <h3 className="font-bold text-[#0A2F1D] text-base md:text-lg mb-1 md:mb-2">{prediction?.recommendation?.action || "Analyzing..."}</h3>
+            <p className="text-[10px] md:text-xs font-medium text-[#627768] line-clamp-3">{prediction?.recommendation?.text || "Evaluating market conditions via historical trajectory."}</p>
           </div>
 
-          <div className="bg-white border border-[#E2DFD3] shadow-sm p-6 rounded-[2rem]">
+          <div className="bg-white border border-[#E2DFD3] shadow-sm p-5 md:p-6 rounded-2xl md:rounded-[2rem] hover:-translate-y-1 transition-all sm:col-span-2 lg:col-span-1">
             <div className="flex justify-between items-start mb-4">
-              <div className="w-12 h-12 rounded-xl bg-green-50 text-emerald-600 flex items-center justify-center text-2xl border border-green-100">
-                <TrendingUp className="w-6 h-6" />
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-green-50 text-emerald-600 flex items-center justify-center text-xl md:text-2xl border border-green-100">
+                <TrendingUp className="w-5 h-5 md:w-6 md:h-6" />
               </div>
-              <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-1 rounded shadow-sm uppercase tracking-wide">Profit Margin</span>
+              <span className="text-[8px] md:text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-1 rounded shadow-sm uppercase tracking-wide">Profit Margin</span>
             </div>
-            <h3 className={`font-bold text-lg mb-2 ${expectedGain >= 0 ? "text-[#10893E]" : "text-red-500"}`}>
+            <h3 className={`font-bold text-base md:text-lg mb-1 md:mb-2 ${expectedGain >= 0 ? "text-[#10893E]" : "text-red-500"}`}>
               {expectedGain >= 0 ? "+" : "−"}₹{Math.abs(expectedGain).toLocaleString()} Forecast
             </h3>
-            <p className="text-sm font-medium text-[#627768]">Expected difference from selling today versus holding for the projected week trajectory.</p>
+            <p className="text-[10px] md:text-xs font-medium text-[#627768]">Expected difference from selling today versus holding for the projected week trajectory.</p>
           </div>
 
         </div>
