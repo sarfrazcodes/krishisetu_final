@@ -1,5 +1,6 @@
 import requests
 import os
+import time
 import joblib
 import pandas as pd
 import google.generativeai as genai
@@ -76,6 +77,24 @@ def parse_date(date_str: str) -> str | None:
     except ValueError:
         print(f"[DATE] ⚠️ Invalid date format: '{date_str}'")
         return None
+
+
+class SupabaseQueryError(Exception):
+    """Raised when a Supabase query fails after retries."""
+    pass
+
+
+def _execute_supabase_query(query_func, retries: int = 2, backoff: float = 0.5):
+    last_error = None
+    for attempt in range(1, retries + 2):
+        try:
+            return query_func()
+        except Exception as e:
+            last_error = e
+            print(f"[SUPABASE] Attempt {attempt}/{retries + 1} failed: {e}")
+            if attempt <= retries:
+                time.sleep(backoff * attempt)
+    raise SupabaseQueryError(last_error)
 
 
 # ─────────────────────────────────────────────
@@ -299,9 +318,9 @@ def get_all_crops() -> list:
 
     # Always read from DB
     try:
-        db_data = supabase.table("crops").select("*").execute()
-    except Exception as e:
-        print(f"[PIPELINE] ❌ Failed to read crops table: {e}")
+        db_data = _execute_supabase_query(lambda: supabase.table("crops").select("*").execute())
+    except SupabaseQueryError as e:
+        print(f"[PIPELINE] ❌ Failed to read crops table after retries: {e}")
         return dummy_crops
 
     if db_data.data:
@@ -316,7 +335,7 @@ def get_all_crops() -> list:
 # 📈 CROP HISTORY
 # ─────────────────────────────────────────────
 def get_crop_history(name: str, mandi_name: str | None = None) -> dict | None:
-    crop_res = supabase.table("crops").select("*").eq("name", name).execute()
+    crop_res = _execute_supabase_query(lambda: supabase.table("crops").select("*").eq("name", name).execute())
     if not crop_res.data:
         return None
 
@@ -325,15 +344,15 @@ def get_crop_history(name: str, mandi_name: str | None = None) -> dict | None:
     query = supabase.table("crop_prices").select("price, arrival_date").eq("crop_id", crop_id)
 
     if mandi_name:
-        mandi_res = supabase.table("mandis").select("id").ilike("name", f"%{mandi_name}%").execute()
+        mandi_res = _execute_supabase_query(lambda: supabase.table("mandis").select("id").ilike("name", f"%{mandi_name}%").execute())
         if mandi_res.data:
             query = query.eq("mandi_id", mandi_res.data[0]["id"])
 
-    price_res = query.order("arrival_date").execute()
+    price_res = _execute_supabase_query(lambda: query.order("arrival_date").execute())
 
     if mandi_name and not price_res.data:
         # Fallback to general history if mandi specific not found
-        price_res = supabase.table("crop_prices").select("price, arrival_date").eq("crop_id", crop_id).order("arrival_date").execute()
+        price_res = _execute_supabase_query(lambda: supabase.table("crop_prices").select("price, arrival_date").eq("crop_id", crop_id).order("arrival_date").execute())
 
     history = [{"date": r["arrival_date"], "price": r["price"]} for r in price_res.data]
     return {"crop": name, "history": history}
@@ -485,8 +504,8 @@ def _fetch_weather(location_name: str) -> dict:
         clean_loc = re.sub(r'(?i)(\(.*?\)|APMC|mandi|market|yard)', '', location_name).strip()
         clean_loc = clean_loc if clean_loc else "Delhi" # Safely default if entirely stripped
         
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={clean_loc}&appid={WEATHER_API_KEY}&units=metric"
-        r = requests.get(url, timeout=3)
+        url = f"https://api.openweathermap.org/data/2.5/weather?q={clean_loc}&appid={WEATHER_API_KEY}&units=metric"
+        r = requests.get(url, timeout=5)
         if r.status_code == 200:
             data = r.json()
             return {
@@ -548,7 +567,11 @@ def predict_crop_price(name: str, mandi_name: str | None = None) -> dict:
     normalized = normalize_crop_name(name)
 
     # --- 1. History ---
-    history_data = get_crop_history(normalized, mandi_name)
+    try:
+        history_data = get_crop_history(normalized, mandi_name)
+    except SupabaseQueryError as e:
+        print(f"[PREDICT] ⚠️ Supabase history lookup failed: {e}. Using heuristic fallback.")
+        history_data = None
     
     # --- 2. Lightning Fast Fallback for Crops without enough History ---
     if not history_data or len(history_data.get("history", [])) < 2:
@@ -684,19 +707,19 @@ def predict_crop_price(name: str, mandi_name: str | None = None) -> dict:
 # 🔍 CROP DETAILS (mandis + best mandi)
 # ─────────────────────────────────────────────
 def get_crop_details(name: str) -> dict | None:
-    crop_res = supabase.table("crops").select("*").eq("name", name).execute()
+    crop_res = _execute_supabase_query(lambda: supabase.table("crops").select("*").eq("name", name).execute())
     if not crop_res.data:
         return None
 
     crop_id = crop_res.data[0]["id"]
 
-    price_res = (
+    price_res = _execute_supabase_query(lambda: (
         supabase.table("crop_prices")
         .select("price, arrival_date, mandis(name, state, district)")
         .eq("crop_id", crop_id)
         .order("arrival_date", desc=True)
         .execute()
-    )
+    ))
 
     seen_mandis = set()
     mandis = []
@@ -727,14 +750,14 @@ def get_crop_by_name(name: str) -> dict | None:
     print(f"[CROP] Normalized to: '{normalized_name}'")
 
     try:
-        crop_res = (
+        crop_res = _execute_supabase_query(lambda: (
             supabase.table("crops")
             .select("*")
             .ilike("name", f"%{normalized_name}%")
             .execute()
-        )
-    except Exception as e:
-        print(f"[CROP] ❌ Failed to query crops table: {e}")
+        ))
+    except SupabaseQueryError as e:
+        print(f"[CROP] ❌ Failed to query crops table after retries: {e}")
         return None
 
     if not crop_res.data:
@@ -745,16 +768,16 @@ def get_crop_by_name(name: str) -> dict | None:
     crop_id = crop["id"]
 
     try:
-        prices_res = (
+        prices_res = _execute_supabase_query(lambda: (
             supabase.table("crop_prices")
             .select("price, arrival_date, mandi_id, mandis(name, state, district)")
             .eq("crop_id", crop_id)
             .order("arrival_date", desc=True)
             .limit(100)
             .execute()
-        )
-    except Exception as e:
-        print(f"[CROP] ❌ Failed to query crop_prices: {e}")
+        ))
+    except SupabaseQueryError as e:
+        print(f"[CROP] ❌ Failed to query crop_prices after retries: {e}")
         return {"id": crop_id, "name": crop["name"], "prices": [], "best_mandi": None}
 
     prices     = prices_res.data or []

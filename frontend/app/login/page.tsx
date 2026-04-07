@@ -41,7 +41,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Using deployed backend URL
+      // Using local backend URL
       const response = await fetch("https://krishisetu-hhef.onrender.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

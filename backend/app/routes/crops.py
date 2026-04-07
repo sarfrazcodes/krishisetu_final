@@ -7,6 +7,7 @@ from app.services.crop_service import (
     build_ml_input,
     predict_crop_price,
     normalize_crop_name,
+    SupabaseQueryError,
 )
 
 router = APIRouter()
@@ -48,7 +49,11 @@ def crop_history(name: str, mandi: str = Query(default=None, description="Option
     Returns time-series price history for a crop, optionally filtered by mandi, ordered by date ascending.
     """
     normalized = normalize_crop_name(name)
-    data = get_crop_history(normalized, mandi_name=mandi)
+    try:
+        data = get_crop_history(normalized, mandi_name=mandi)
+    except SupabaseQueryError as e:
+        raise HTTPException(status_code=503, detail="Database temporarily unavailable. Please retry in a moment.")
+
     if not data:
         raise HTTPException(status_code=404, detail=f"No history found for '{normalized}'.")
     return data
