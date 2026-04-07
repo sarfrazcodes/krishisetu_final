@@ -6,7 +6,6 @@ replace_text = "http://localhost:8000"
 frontend_dir = r"c:\Users\Sarfraz\krishisetu\frontend"
 
 for root, dirs, files in os.walk(frontend_dir):
-    dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'node_modules']
     for file in files:
         if file.endswith((".tsx", ".ts", ".js")):
             filepath = os.path.join(root, file)

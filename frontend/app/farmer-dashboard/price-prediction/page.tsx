@@ -27,7 +27,7 @@ export default function PricePredictionPage() {
   useEffect(() => {
     setMounted(true);
     // Fetch all crops for the primary dropdown once on mount
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
     fetch(`${API_BASE}/crops`)
       .then(r => {
         if (!r.ok) throw new Error("Crops API returned non-200");
@@ -50,7 +50,7 @@ export default function PricePredictionPage() {
     if (!mounted) return;
     setLoading(true);
     setApiError(false);
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
 
     const fetchAllData = async () => {
       try {

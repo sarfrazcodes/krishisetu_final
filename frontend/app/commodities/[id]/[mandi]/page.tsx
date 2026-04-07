@@ -98,77 +98,77 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-
     setLoading(true);
     setApiError(false);
-    const API_BASE = "http://localhost:8000";
+    const API_BASE = "https://krishisetu-hhef.onrender.com";
 
     // 1. Instantly pull History and numerical ML trajectory
     Promise.all([
-      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/history?mandi=${encodeURIComponent(mandiId)}`, { signal }).then(r => {
+      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/history?mandi=${encodeURIComponent(mandiId)}`).then(r => {
         if (!r.ok) throw new Error("API returned non-200 status");
         return r.json();
       }),
-      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/predict?mandi=${encodeURIComponent(mandiId)}`, { signal }).then(r => {
+      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/predict?mandi=${encodeURIComponent(mandiId)}`).then(r => {
         if (!r.ok) throw new Error("API returned non-200 status");
         return r.json();
       })
     ])
       .then(([histData, predData]) => {
-        if (!isMounted) return;
         setHistory(histData.history || []);
         setPrediction(predData);
         setLoading(false);
 
         // 2. Poll the LLM Engine separately so the UI doesn't lock for 5 seconds
         const w = predData.weather || { temp: 28, rainProbability: 20, description: "Clear" };
-        fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/advisory?mandi=${encodeURIComponent(mandiId)}&temp=${w.temp}&rain=${w.rainProbability}&desc=${w.description}`, { signal })
+        fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/advisory?mandi=${encodeURIComponent(mandiId)}&temp=${w.temp}&rain=${w.rainProbability}&desc=${w.description}`)
           .then(r => r.json())
-          .then(adv => {
-            if (isMounted) setWeatherAdvisory(adv.instruction);
-          })
+          .then(adv => setWeatherAdvisory(adv.instruction))
           .catch(err => {
-            if (err.name === 'AbortError') return;
-            console.error("Advisory Error:", err);
+            if (err instanceof Error && err.message === "Failed to fetch") return;
+            console.error(err);
           });
       })
       .catch(err => {
-        if (err.name === 'AbortError' || !isMounted) return;
         console.error("API Network Error:", err);
         setApiError(true);
-        setTimeout(() => {
-          if (isMounted) setRetryCount(prev => prev + 1);
-        }, 6000);
+        setTimeout(() => setRetryCount(prev => prev + 1), 6000);
       });
-
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
   }, [cropId, mandiId, retryCount]);
 
-  if (loading) {
+  if (loading && !apiError) {
     return (
-      <div className="min-h-screen bg-[#FDF8EE] p-6 flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center justify-center space-y-5 bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-[#10893E]/20 relative z-10 max-w-md w-full text-center">
-          <div className="relative flex items-center justify-center pulse-glow mb-2">
+      <div className="min-h-screen bg-[#FDF8EE] p-6 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="relative flex items-center justify-center animate-pulse">
             <div className="w-20 h-20 border-4 border-[#10893E]/20 rounded-full"></div>
             <div className="absolute w-20 h-20 border-4 border-[#10893E] border-t-transparent rounded-full animate-spin"></div>
             <MapPin className="absolute w-8 h-8 text-[#10893E]" />
           </div>
           <h3 className="text-xl font-black text-[#0A2F1D] tracking-wide">
-            {apiError ? 'Reconnecting to Engine...' : t('Aggregating AI Diagnostics...')}
+            {t('Aggregating AI Diagnostics...')}
           </h3>
           <p className="text-sm font-bold text-[#8A9A90] uppercase tracking-widest">
-            {apiError ? 'Standby for data link' : `${t('Cross-checking ')} ${mandiId} ${t('weather systems')}`}
+            {t('Cross-checking ')} {mandiId} {t('weather systems')}
           </p>
         </div>
       </div>
     );
   }
+
+  if (apiError) return (
+    <div className="min-h-screen bg-[#FDF8EE] p-6 flex flex-col items-center justify-center">
+      <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-[#10893E]/20 flex flex-col items-center max-w-md text-center z-10 relative">
+        <div className="relative flex items-center justify-center animate-pulse mb-6">
+          <div className="w-16 h-16 border-4 border-[#10893E]/20 rounded-full"></div>
+          <div className="absolute w-16 h-16 border-4 border-[#10893E] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <h2 className="text-xl font-black text-[#0A2F1D] mb-2">Connecting to Intelligence Engine...</h2>
+        <p className="text-sm font-medium text-[#627768]">
+          The KrishiSetu backend is waking up or temporarily unavailable. Automatically retrying...
+        </p>
+      </div>
+    </div>
+  );
 
   // 1. DATA MAPPING
   const COMMODITY_NAME = prediction?.crop || cropId;
@@ -390,7 +390,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
               </div>
             </div>
             <div className="w-full" style={{ height: 280 }}>
-              <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
+              <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis dataKey="date" axisLine={false} tickLine={false}

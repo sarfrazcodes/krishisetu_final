@@ -40,7 +40,7 @@ export default function BuyerOverviewPage() {
       } catch(e) {}
     }
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
 
     // Fetch live crops to dynamically populate shipments
     fetch(`${API_BASE}/crops`)

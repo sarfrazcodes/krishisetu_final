@@ -27,7 +27,7 @@ export default function MarketAnalyticsPage() {
 
   useEffect(() => {
     setMounted(true);
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
     fetch(`${API_BASE}/crops`)
       .then(r => {
         if (!r.ok) throw new Error("Crops API error");
@@ -50,7 +50,7 @@ export default function MarketAnalyticsPage() {
     setLoading(true);
     setApiError(false);
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
 
     const fetchAllData = async () => {
       try {
