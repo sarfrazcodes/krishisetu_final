@@ -41,11 +41,11 @@ def get_crop(name: str):
 # GET /crops/{name}/history
 # ─────────────────────────────────────────────
 @router.get("/{name}/history")
-def crop_history(name: str):
+def crop_history(name: str, mandi: str = Query(default=None, description="Optional mandi name for context")):
     """
-    Returns time-series price history for a crop, ordered by date ascending.
+    Returns time-series price history for a crop, optionally filtered by mandi, ordered by date ascending.
     """
-    data = get_crop_history(name)
+    data = get_crop_history(name, mandi_name=mandi)
     if not data:
         raise HTTPException(status_code=404, detail=f"No history found for '{name}'.")
     return data
