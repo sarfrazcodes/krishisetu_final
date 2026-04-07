@@ -12,7 +12,7 @@ export default function CropMandisPage({ params }: { params: Promise<{ id: strin
 
   useEffect(() => {
     setLoading(true);
-    const API_BASE = "https://krishisetu-hhef.onrender.com";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}`)
       .then(res => res.json())

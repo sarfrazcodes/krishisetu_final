@@ -144,6 +144,38 @@ const VoiceModule = (() => {
   }
 
   /* ── TTS public ────────────────────────────────────── */
+  const selectBestVoice = (voices: SpeechSynthesisVoice[], targetLang: string): SpeechSynthesisVoice | null => {
+    const normalizedTarget = targetLang.replace('_', '-').toLowerCase();
+    const isFemaleVoice = (voice: SpeechSynthesisVoice) =>
+      /female|woman|girl|féminin|feminine/i.test(`${voice.name} ${voice.voiceURI}`);
+
+    const exactMatches = voices.filter(
+      (voice) => voice.lang.replace('_', '-').toLowerCase() === normalizedTarget
+    );
+    const exactFemale = exactMatches.find(isFemaleVoice);
+    if (exactFemale) return exactFemale;
+    if (exactMatches.length) return exactMatches[0];
+
+    const primary = normalizedTarget.split('-')[0];
+    const startsWithMatches = voices.filter((voice) =>
+      voice.lang.replace('_', '-').toLowerCase().startsWith(primary)
+    );
+    const startsWithFemale = startsWithMatches.find(isFemaleVoice);
+    if (startsWithFemale) return startsWithFemale;
+    if (startsWithMatches.length) return startsWithMatches[0];
+
+    if (primary === 'pa') {
+      const hindiMatches = voices.filter((voice) =>
+        voice.lang.replace('_', '-').toLowerCase().startsWith('hi')
+      );
+      const hindiFemale = hindiMatches.find(isFemaleVoice);
+      if (hindiFemale) return hindiFemale;
+      if (hindiMatches.length) return hindiMatches[0];
+    }
+
+    return null;
+  };
+
   function speak(text: string, opts: TTSOptions = {}): void {
     if (!isTTSSupported()) {
       console.warn("[VoiceModule] TTS not supported in this browser.");
@@ -158,10 +190,8 @@ const VoiceModule = (() => {
     utterance.pitch = opts.pitch ?? 1;
 
     const voices = window.speechSynthesis.getVoices();
-    const preferred =
-      voices.find((v) => v.lang === utterance.lang && v.localService) ??
-      voices.find((v) => v.lang.startsWith(utterance.lang.split("-")[0]));
-    if (preferred) utterance.voice = preferred;
+    const bestVoice = selectBestVoice(voices, utterance.lang);
+    if (bestVoice) utterance.voice = bestVoice;
 
     utterance.onstart = () => opts.onStart?.();
     utterance.onend   = () => opts.onEnd?.();

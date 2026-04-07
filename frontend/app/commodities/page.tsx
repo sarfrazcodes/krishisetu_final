@@ -22,7 +22,7 @@ export default function CommoditiesPage() {
   const categories = ["All", "General", "Vegetable", "Cereal", "Fruit"];
 
   useEffect(() => {
-    const API_BASE = "https://krishisetu-hhef.onrender.com";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     fetch(`${API_BASE}/crops/`)
       .then((res) => res.json())

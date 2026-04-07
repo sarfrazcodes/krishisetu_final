@@ -21,9 +21,14 @@ def process_voice_intent(text: str, role: str = "guest", pathname: str = "/", pa
         return {"action": "error", "message": "API key missing.", "language": "English", "route": None}
 
     prompt = f"""
-    You are 'KrishiSetu Voice', an AI assistant for an Indian agriculture platform. 
-    Analyze the user's spoken text, figure out what they want based on their role, and write a natural, friendly response natively in the exact language the user spoke in. **IMPORTANT: You have a female persona. When responding in Hindi, you MUST strictly use female grammatical constructs (e.g., 'main dikhati hoon', 'main kar rahi hoon').**
-    **RESPONSE LENGTH INSTRUCTIONS:** 
+    You are 'KrishiSetu Voice', an AI assistant for an Indian agriculture platform.
+    Analyze the user's spoken text, figure out what they want based on their role, and write a natural, friendly response in the exact language the user spoke.
+    - If the user speaks Punjabi, respond in Punjabi using Gurmukhi script only. Do NOT use Latin/Roman script for Punjabi.
+    - If the user speaks Hindi, respond in Hindi using Devanagari.
+    - If the user speaks English, respond in natural English.
+    - You have a female persona. When responding in Hindi or Punjabi, use gentle, helpful female phrasing.
+
+    **RESPONSE LENGTH INSTRUCTIONS:**
     - For general actions/navigation: Keep it extremely short (max 1 sentence, under 15 words).
     - For "explain this page" or similar requests: Provide a complete, detailed, and comprehensive explanation of the page content as requested. Do NOT restrict the length.
     DO NOT explain your thought process. ONLY output a strict JSON payload.
@@ -35,6 +40,12 @@ def process_voice_intent(text: str, role: str = "guest", pathname: str = "/", pa
     
     User Spoke: "{text}"
     
+    Language Rules:
+    - If the input is Punjabi or contains Punjabi words, set language="pa-IN" and write the message in Punjabi Gurmukhi.
+    - If the input is Hindi, set language="hi-IN" and write the message in Hindi Devanagari.
+    - If the input is English, set language="en-IN" or "en-US" and write the message in English.
+    - Avoid Romanized Punjabi or Romanized Hindi. Always use native script for those languages.
+
     Routing & Logic Rules:
     1. If intent is to add a listing (e.g. "mere paas 100 kg gehun hai"):
        - IF role != farmer: set action="unauthorized", message="Sorry, only farmers can add listings.", route=null.
@@ -61,14 +72,32 @@ def process_voice_intent(text: str, role: str = "guest", pathname: str = "/", pa
     """
     
     try:
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "max_output_tokens": 300,  # Limit output to keep responses short
+                "temperature": 0.7,  # Balanced creativity
+            }
+        )
         raw_text = response.text.strip()
         if raw_text.startswith("```json"):
             raw_text = raw_text[7:-3]
         elif raw_text.startswith("```"):
             raw_text = raw_text[3:-3]
             
+        # Clean any markdown formatting like **text**
+        import re
+        raw_text = re.sub(r'\*\*(.*?)\*\*', r'\1', raw_text)
+        
         data = json.loads(raw_text)
+        # Normalize common voice navigation routes
+        route = data.get("route")
+        if isinstance(route, str):
+            cleaned = route.strip().lower().replace(" ", "-")
+            if cleaned in ["about-us", "/about-us", "aboutus", "/aboutus", "about us", "/about us"]:
+                data["route"] = "/about"
+            elif not cleaned.startswith("/"):
+                data["route"] = f"/{cleaned}"
         return data
     except Exception as e:
         print(f"[VOICE AI] Failed to parse unified JSON: {e}")

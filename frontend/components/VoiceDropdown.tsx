@@ -32,6 +32,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [statusType, setStatusType] = useState<StatusType>("idle");
   const [statusMessage, setStatusMessage] = useState("Ready");
   const [selectedLang, setSelectedLang] = useState(LANGUAGE_OPTIONS[0]);
@@ -50,29 +51,76 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
     }
   }, []);
 
+  const normalizeRoute = (route: string | null | undefined): string | null => {
+    if (!route) return null;
+    const cleaned = route.trim().toLowerCase().replace(/\s+/g, "-").replace(/\/+/g, "/");
+    if (["/about-us", "/aboutus", "about-us", "aboutus", "/about-us/", "/about us"].includes(cleaned)) {
+      return "/about";
+    }
+    if (!cleaned.startsWith("/")) {
+      return `/${cleaned}`;
+    }
+    return cleaned;
+  };
+
+  const selectBestVoice = (voices: SpeechSynthesisVoice[], targetLang: string): SpeechSynthesisVoice | null => {
+    const cleanedTarget = targetLang.replace('_', '-').toLowerCase();
+    const isFemaleVoice = (voice: SpeechSynthesisVoice) =>
+      /female|woman|girl|féminin|feminine/i.test(`${voice.name} ${voice.voiceURI}`);
+
+    const exactMatches = voices.filter(
+      (v) => v.lang.replace('_', '-').toLowerCase() === cleanedTarget
+    );
+    const exactFemale = exactMatches.find(isFemaleVoice);
+    if (exactFemale) return exactFemale;
+    if (exactMatches.length) return exactMatches[0];
+
+    const primaryLang = cleanedTarget.split('-')[0];
+    const beginsWithMatches = voices.filter((v) =>
+      v.lang.replace('_', '-').toLowerCase().startsWith(primaryLang)
+    );
+    const beginsWithFemale = beginsWithMatches.find(isFemaleVoice);
+    if (beginsWithFemale) return beginsWithFemale;
+    if (beginsWithMatches.length) return beginsWithMatches[0];
+
+    if (primaryLang === 'pa') {
+      const hindiVoices = voices.filter((v) =>
+        v.lang.replace('_', '-').toLowerCase().startsWith('hi')
+      );
+      const hindiFemale = hindiVoices.find(isFemaleVoice);
+      if (hindiFemale) return hindiFemale;
+      if (hindiVoices.length) return hindiVoices[0];
+    }
+
+    return null;
+  };
+
   // Audio function
   const playAudio = (text: string, langCode: string, actionType: string) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel(); // stop previous
       const utterance = new SpeechSynthesisUtterance(text);
-      let targetLang = "en-IN";
-      if (langCode?.toLowerCase().includes("hindi") || langCode?.toLowerCase().includes("punjabi") || selectedLang.code === "hi-IN") {
-        targetLang = "hi-IN";
+      let targetLang = 'en-IN';
+      const normalized = String(langCode || selectedLang.code).toLowerCase();
+      if (normalized.includes('punjabi') || normalized === 'pa-in' || selectedLang.code === 'pa-IN') {
+        targetLang = 'pa-IN';
+      } else if (normalized.includes('hindi') || normalized === 'hi-in' || selectedLang.code === 'hi-IN') {
+        targetLang = 'hi-IN';
       }
       utterance.lang = targetLang;
 
-      // Force proper localized Voice Profile (Google Hindi / Native OS Dialect)
       const voices = window.speechSynthesis.getVoices();
-      const localizedVoice = voices.find(v => v.lang === targetLang || v.lang.replace('_', '-') === targetLang) || voices.find(v => v.lang.includes(targetLang.split('-')[0]));
-
-      if (localizedVoice) {
-        utterance.voice = localizedVoice;
+      const bestVoice = selectBestVoice(voices, targetLang);
+      if (bestVoice) {
+        utterance.voice = bestVoice;
       }
 
       utterance.rate = 0.95; // Slightly slower, highly empathetic pacing
 
+      utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => {
-        if (actionType === "ask_clarification") {
+        setIsSpeaking(false);
+        if (actionType === 'ask_clarification') {
           // Restart microphone instantly for continuous dialogue
           if (!isListening) toggleListening();
         }
@@ -115,6 +163,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
   useEffect(() => {
     if (!isOpen) {
       stopListening();
+      stopSpeaking();
       setQuery("");
       setResult(null);
       setError(null);
@@ -123,6 +172,13 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
       setStatusMessage("Ready");
     }
   }, [isOpen]);
+
+  const stopSpeaking = useCallback(() => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  }, []);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
@@ -198,10 +254,10 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
     setResult(null);
     setError(null);
     setStatusType("loading");
-    setStatusMessage("Fetching prediction…");
+    setStatusMessage("🤔 KrishiSetu AI thinking…");
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
       let role = "guest";
       let userId = null;
@@ -235,15 +291,16 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
 
       setResult(data.message);
       setStatusType("success");
-      setStatusMessage(`Action: ${data.action || 'success'}`);
+      setStatusMessage(`✓ Got it! ${data.action === 'explain' ? 'Explaining...' : data.action === 'add_listing' ? 'Creating listing...' : data.action === 'navigate' ? 'Navigating...' : 'Complete'}`);
 
       // Text-to-Speech Output
       playAudio(data.message, data.language || "Hindi", data.action || "");
 
       // Interactive Navigation Routing (Wait slightly so voice starts)
       if (data.action === "navigate" && data.route) {
+        const normalizedRoute = normalizeRoute(data.route);
         setTimeout(() => {
-          router.push(data.route);
+          if (normalizedRoute) router.push(normalizedRoute);
         }, 150);
         onClose();
       }
@@ -267,7 +324,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
       const msg = err instanceof Error ? err.message : "Something went wrong";
       setError(msg);
       setStatusType("error");
-      setStatusMessage("Error");
+      setStatusMessage("❌ Error");
     } finally {
       setIsLoading(false);
     }
@@ -349,8 +406,8 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
                 </button>
               </div>
 
-              {/* Body */}
-              <div className="p-5 space-y-4">
+              {/* Body — scrollable */}
+              <div className="p-5 space-y-4 max-h-[calc(80vh-120px)] overflow-y-auto">
 
                 {/* Language selector */}
                 <div className="flex items-center gap-3">
@@ -402,6 +459,26 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
                       <path d="M5 10a7 7 0 0 0 14 0M12 19v3M8 22h8" />
                     </svg>
                   </button>
+                  {isSpeaking && (
+                    <button
+                      onClick={stopSpeaking}
+                      title="Stop speaking"
+                      className="w-8 h-8 rounded-md bg-red-600 hover:bg-red-700 flex items-center justify-center flex-shrink-0 border border-red-500 transition-all duration-150"
+                    >
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="6" y="6" width="12" height="12" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
 
                 {/* Status bar — always visible */}

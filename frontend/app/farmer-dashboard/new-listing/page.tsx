@@ -55,7 +55,7 @@ function NewListingForm() {
 
     setIsSubmitting(true);
     const token = localStorage.getItem("token");
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     try {
       const res = await fetch(`${API_URL}/listings`, {

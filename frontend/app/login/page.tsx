@@ -42,7 +42,8 @@ export default function LoginPage() {
 
     try {
       // Using local backend URL
-      const response = await fetch("https://krishisetu-hhef.onrender.com/auth/login", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, password })

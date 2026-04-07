@@ -100,7 +100,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
   useEffect(() => {
     setLoading(true);
     setApiError(false);
-    const API_BASE = "https://krishisetu-hhef.onrender.com";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     // 1. Instantly pull History and numerical ML trajectory
     Promise.all([

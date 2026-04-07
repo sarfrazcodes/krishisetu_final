@@ -48,7 +48,8 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://krishisetu-hhef.onrender.com/auth/signup", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${API_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, phone, password, role })

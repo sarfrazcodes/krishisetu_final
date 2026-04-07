@@ -50,7 +50,7 @@ export default function FarmerDashboardOverview() {
       } catch(e) {}
     }
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     // Fetch Live Prices
     fetch(`${API_BASE}/crops`)
