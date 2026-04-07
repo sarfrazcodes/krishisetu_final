@@ -6,6 +6,7 @@ from app.services.crop_service import (
     get_crop_history,
     build_ml_input,
     predict_crop_price,
+    normalize_crop_name,
 )
 
 router = APIRouter()
@@ -31,9 +32,10 @@ def get_crop(name: str):
     """
     Returns mandi list + best mandi for a given crop name.
     """
-    data = get_crop_details(name)
+    normalized = normalize_crop_name(name)
+    data = get_crop_details(normalized)
     if not data:
-        raise HTTPException(status_code=404, detail=f"Crop '{name}' not found.")
+        raise HTTPException(status_code=404, detail=f"Crop '{normalized}' not found.")
     return data
 
 
@@ -45,9 +47,10 @@ def crop_history(name: str, mandi: str = Query(default=None, description="Option
     """
     Returns time-series price history for a crop, optionally filtered by mandi, ordered by date ascending.
     """
-    data = get_crop_history(name, mandi_name=mandi)
+    normalized = normalize_crop_name(name)
+    data = get_crop_history(normalized, mandi_name=mandi)
     if not data:
-        raise HTTPException(status_code=404, detail=f"No history found for '{name}'.")
+        raise HTTPException(status_code=404, detail=f"No history found for '{normalized}'.")
     return data
 
 
