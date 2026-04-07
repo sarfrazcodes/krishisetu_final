@@ -12,6 +12,8 @@ export default function PricePredictionPage() {
   const [chartData, setChartData] = useState<any[]>([]);
   const [prediction, setPrediction] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [availableMandis, setAvailableMandis] = useState<string[]>([]);
+  const [availableCrops, setAvailableCrops] = useState<any[]>([]);
 
   // Helper function
   function formatDate(dateStr: string) {
@@ -22,6 +24,16 @@ export default function PricePredictionPage() {
 
   useEffect(() => {
     setMounted(true);
+    // Fetch all crops for the primary dropdown once on mount
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
+    fetch(`${API_BASE}/crops`)
+      .then(r => r.json())
+      .then(data => {
+        // Sort crops alphabetically just in case
+        const sorted = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
+        setAvailableCrops(sorted);
+      })
+      .catch(err => console.error(err));
   }, []);
 
   useEffect(() => {
@@ -29,11 +41,36 @@ export default function PricePredictionPage() {
     setLoading(true);
     const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
 
-    Promise.all([
-      fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}/history`).then(r => r.json()),
-      fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}/predict?mandi=${encodeURIComponent(selectedMandi)}`).then(r => r.json())
-    ])
-      .then(([histData, predData]) => {
+    const fetchAllData = async () => {
+      try {
+        // 1. Fetch mandis available for crop
+        const cropRes = await fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}`);
+        const cropData = await cropRes.json();
+        const mandiList = cropData.mandis ? cropData.mandis.map((m: any) => m.name) : [];
+        setAvailableMandis(mandiList);
+
+        let targetMandi = selectedMandi;
+        if (mandiList.length > 0 && !mandiList.includes(targetMandi)) {
+          targetMandi = mandiList[0];
+          setSelectedMandi(targetMandi);
+        }
+
+        if (!targetMandi || mandiList.length === 0) {
+           setChartData([]);
+           setPrediction(null);
+           setLoading(false);
+           return;
+        }
+
+        // 2. Fetch history and pred
+        const [histRes, predRes] = await Promise.all([
+          fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}/history?mandi=${encodeURIComponent(targetMandi)}`),
+          fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}/predict?mandi=${encodeURIComponent(targetMandi)}`)
+        ]);
+
+        const histData = await histRes.json();
+        const predData = await predRes.json();
+
         setPrediction(predData);
 
         let rows = histData.history || [];
@@ -42,13 +79,14 @@ export default function PricePredictionPage() {
         const currentPrice = predData.current_price || 2000;
         const forecastPrice = predData.predicted_price_weekly || Math.round(currentPrice * 1.05);
 
+        const LAST_UPDATED = rows.length > 0 ? rows[rows.length - 1].date : new Date().toISOString();
         if (rows.length <= 1) {
           cData = [
-            { date: "Current", price: currentPrice, forecast: currentPrice },
-            { date: "Tomorrow", price: undefined, forecast: Math.round(currentPrice * 1.02) },
-            { date: "Day 3", price: undefined, forecast: Math.round(currentPrice + ((forecastPrice - currentPrice) * 0.4)) },
-            { date: "Day 5", price: undefined, forecast: Math.round(currentPrice + ((forecastPrice - currentPrice) * 0.7)) },
-            { date: "7-Days", price: undefined, forecast: forecastPrice },
+            { date: formatDate(LAST_UPDATED), price: currentPrice, forecast: currentPrice },
+            { date: "+ 1 Day", price: undefined, forecast: Math.round(currentPrice * 1.02) },
+            { date: "+ 3 Days", price: undefined, forecast: Math.round(currentPrice + ((forecastPrice - currentPrice) * 0.4)) },
+            { date: "+ 5 Days", price: undefined, forecast: Math.round(currentPrice + ((forecastPrice - currentPrice) * 0.7)) },
+            { date: "+ 7 Days", price: undefined, forecast: forecastPrice },
           ];
         } else {
           cData = rows.map((row: any, idx: number) => ({
@@ -56,16 +94,19 @@ export default function PricePredictionPage() {
             price: row.price,
             forecast: (idx === rows.length - 1) ? row.price : undefined
           }));
-          cData.push({ date: "Tomorrow", price: undefined, forecast: Math.round(predData.predicted_price || currentPrice) });
-          cData.push({ date: "7-Days", price: undefined, forecast: forecastPrice });
+          cData.push({ date: "+ 1 Day", price: undefined, forecast: Math.round(predData.predicted_price || currentPrice) });
+          cData.push({ date: "+ 7 Days", price: undefined, forecast: forecastPrice });
         }
         setChartData(cData);
         setLoading(false);
-      })
-      .catch(err => {
+
+      } catch (err) {
         console.error(err);
         setLoading(false);
-      });
+      }
+    };
+    
+    fetchAllData();
   }, [selectedCrop, selectedMandi, mounted]);
 
   if (!mounted) return null;
@@ -96,12 +137,13 @@ export default function PricePredictionPage() {
               onChange={(e) => setSelectedCrop(e.target.value)}
               className="w-full pl-10 pr-8 py-3 bg-white border border-[#E2DFD3] rounded-xl font-bold text-[#0A2F1D] text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#10893E] appearance-none"
             >
-              <option>Wheat (Lok-1)</option>
-              <option>Basmati Rice</option>
-              <option>Mustard Seed</option>
-              <option>Soybean</option>
-              <option>Cotton</option>
-              <option>Potato (Kufri)</option>
+              {availableCrops.length > 0 ? (
+                availableCrops.map(c => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
+                ))
+              ) : (
+                <option value={selectedCrop}>{selectedCrop}</option>
+              )}
             </select>
             <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[10px] md:text-xs text-[#8A9A90]">▼</span>
           </div>
@@ -112,12 +154,16 @@ export default function PricePredictionPage() {
             <select
               value={selectedMandi}
               onChange={(e) => setSelectedMandi(e.target.value)}
-              className="w-full pl-10 pr-8 py-3 bg-white border border-[#E2DFD3] rounded-xl font-bold text-[#0A2F1D] text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#10893E] appearance-none"
+              disabled={availableMandis.length === 0}
+              className="w-full pl-10 pr-8 py-3 bg-white border border-[#E2DFD3] rounded-xl font-bold text-[#0A2F1D] text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#10893E] appearance-none disabled:opacity-50"
             >
-              <option>Ludhiana APMC</option>
-              <option>Khanna APMC</option>
-              <option>Karnal Mandi</option>
-              <option>Delhi Azadpur</option>
+              {availableMandis.length > 0 ? (
+                availableMandis.map((mandi) => (
+                  <option key={mandi}>{mandi}</option>
+                ))
+              ) : (
+                <option value="">No Active Mandis</option>
+              )}
             </select>
             <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[10px] md:text-xs text-[#8A9A90]">▼</span>
           </div>
@@ -153,7 +199,7 @@ export default function PricePredictionPage() {
             <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#10893E" strokeOpacity={0.15} />
               <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#8A9A90", fontWeight: 500 }} dy={8} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#8A9A90", fontWeight: 500 }} tickFormatter={v => `₹${v}`} />
+              <YAxis domain={['auto', 'auto']} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#8A9A90", fontWeight: 500 }} tickFormatter={v => `₹${v}`} />
               <Tooltip
                 formatter={(value: any) => [`₹${value?.toLocaleString("en-IN")}`, "Price"]}
                 contentStyle={{ borderRadius: "8px", border: "1px solid #10893E", backgroundColor: "#0A2F1D", color: "#fff", fontSize: "11px", fontWeight: 600 }}

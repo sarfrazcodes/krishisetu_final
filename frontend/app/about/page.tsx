@@ -2,18 +2,18 @@
 
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, Variants } from "framer-motion";
 import {
   Mic, TrendingUp, Users, Brain, Globe,
   CloudSun, ShieldCheck, Zap, Handshake, Network, LayoutTemplate, Database, Cog, LineChart, MessageSquare
 } from "lucide-react";
 
-const fadeInUp = {
+const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -86,7 +86,7 @@ export default function AboutPage() {
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInUp}>
               <h2 className="heading-serif text-3xl md:text-4xl font-black text-[#0A2F1D] mb-6">Our Approach</h2>
               <p className="text-[#2D503C] text-lg font-medium mb-8 leading-relaxed">
-                We designed KrishiSetu to transform raw data into simple, actionable decisions. We don't just show charts; we give clear advice.
+                We designed KrishiSetu to transform raw data into simple, actionable decisions. We don&apos;t just show charts; we give clear advice.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

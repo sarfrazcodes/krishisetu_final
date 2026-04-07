@@ -95,11 +95,12 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const API_BASE = "https://krishisetu-hhef.onrender.com";
 
     // 1. Instantly pull History and numerical ML trajectory
     Promise.all([
-      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/history`).then(r => r.json()),
+      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/history?mandi=${encodeURIComponent(mandiId)}`).then(r => r.json()),
       fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/predict?mandi=${encodeURIComponent(mandiId)}`).then(r => r.json())
     ])
       .then(([histData, predData]) => {
@@ -198,11 +199,11 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
     const tom = prediction?.predicted_price || Math.round(cp * 1.02);
     const wk = Math.round(predictedPrice);
     chartData = [
-      { date: "Current", price: cp, forecast: cp },
-      { date: "Tomorrow", price: undefined, forecast: tom },
-      { date: "Day 3", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.4)) },
-      { date: "Day 5", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.7)) },
-      { date: "7-Days", price: undefined, forecast: wk },
+      { date: formatDate(LAST_UPDATED), price: cp, forecast: cp },
+      { date: "+ 1 Day", price: undefined, forecast: tom },
+      { date: "+ 3 Days", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.4)) },
+      { date: "+ 5 Days", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.7)) },
+      { date: "+ 7 Days", price: undefined, forecast: wk },
     ];
   } else {
     chartData = priceRows.map((row, idx) => ({
@@ -211,12 +212,12 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
       forecast: (idx === priceRows.length - 1) ? row.modal_price : undefined
     }));
     chartData.push({
-      date: "Tomorrow",
+      date: "+ 1 Day",
       price: undefined,
       forecast: Math.round(prediction?.predicted_price || currentPrice)
     });
     chartData.push({
-      date: "7-Days",
+      date: "+ 7 Days",
       price: undefined,
       forecast: Math.round(predictedPrice)
     });
@@ -279,7 +280,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
             </div>
 
             <div className="text-left md:text-right mt-6 md:mt-0">
-              <span className="text-white/80 font-bold text-sm tracking-wide block mb-1">Today's Mandi Price</span>
+              <span className="text-white/80 font-bold text-sm tracking-wide block mb-1">Mandi Price on {formatDate(LAST_UPDATED)}</span>
               <div className="flex items-baseline justify-start md:justify-end gap-1">
                 <span className="text-5xl md:text-7xl font-black text-[#FBC02D] drop-shadow-xl tracking-tighter">₹{currentPrice.toLocaleString("en-IN")}</span>
                 <span className="text-white font-bold text-xl md:text-2xl drop-shadow-md">/q</span>
@@ -294,7 +295,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
 
           {/* Today's Price */}
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 md:col-span-1">
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">Today's Price</p>
+            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">Price on {formatDate(LAST_UPDATED)}</p>
             <div className="flex items-end gap-2">
               <h2 className="text-2xl font-extrabold text-slate-900">₹{currentPrice.toLocaleString("en-IN")}</h2>
               <span className={`flex items-center text-xs font-bold px-2 py-0.5 rounded-full mb-0.5 ${expectedGain >= 0 ? "text-emerald-700 bg-emerald-50" : "text-red-600 bg-red-50"}`}>
@@ -381,7 +382,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis dataKey="date" axisLine={false} tickLine={false}
                     tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 500 }} dy={8} />
-                  <YAxis axisLine={false} tickLine={false}
+                  <YAxis domain={['auto', 'auto']} axisLine={false} tickLine={false}
                     tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 500 }}
                     tickFormatter={v => `₹${v}`} width={65} />
                   <Tooltip
@@ -518,7 +519,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
             <h3 className="text-base font-bold text-slate-900 mb-4">💰 Expected Gain Estimation</h3>
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                <p className="text-xs text-slate-400 font-semibold uppercase mb-1">Sell Today</p>
+                <p className="text-xs text-slate-400 font-semibold uppercase mb-1">Sell on {formatDate(LAST_UPDATED)}</p>
                 <p className="text-xl font-extrabold text-slate-800">₹{currentPrice.toLocaleString("en-IN")}</p>
                 <p className="text-xs text-slate-400 mt-1">per quintal</p>
               </div>

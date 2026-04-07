@@ -73,7 +73,7 @@ export default function FarmerDashboardOverview() {
 
     // Fetch Graph History + Prediction
     Promise.all([
-      fetch(`${API_BASE}/crops/Wheat (Lok-1)/history`).then(r => r.json()),
+      fetch(`${API_BASE}/crops/Wheat (Lok-1)/history?mandi=Ludhiana APMC`).then(r => r.json()),
       fetch(`${API_BASE}/crops/Wheat (Lok-1)/predict?mandi=Ludhiana APMC`).then(r => r.json())
     ]).then(([histData, predData]) => {
       const rows = histData.history || [];
@@ -86,14 +86,14 @@ export default function FarmerDashboardOverview() {
       if (rows.length <= 1) {
         cData = [
           { name: "Past", price: cp - 50 },
-          { name: "Today", price: cp },
+          { name: "Current", price: cp },
           { name: "Day 3", price: cp + 30 },
           { name: "Next Week", price: target },
         ];
       } else {
         const last7 = rows.slice(-5);
         cData = last7.map((r: any, idx: number) => ({
-          name: idx === last7.length - 1 ? "Today" : "Past",
+          name: idx === last7.length - 1 ? "Current" : "Past",
           price: r.price
         }));
         cData.push({ name: "Next Week", price: target });

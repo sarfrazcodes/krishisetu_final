@@ -11,6 +11,7 @@ export default function CropMandisPage({ params }: { params: Promise<{ id: strin
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const API_BASE = "https://krishisetu-hhef.onrender.com";
 
     fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}`)
