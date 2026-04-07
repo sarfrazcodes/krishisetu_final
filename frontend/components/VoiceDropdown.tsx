@@ -254,7 +254,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
     setResult(null);
     setError(null);
     setStatusType("loading");
-    setStatusMessage("🤔 KrishiSetu AI thinking…");
+    setStatusMessage("Fetching prediction…");
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -291,7 +291,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
 
       setResult(data.message);
       setStatusType("success");
-      setStatusMessage(`✓ Got it! ${data.action === 'explain' ? 'Explaining...' : data.action === 'add_listing' ? 'Creating listing...' : data.action === 'navigate' ? 'Navigating...' : 'Complete'}`);
+      setStatusMessage(`Action: ${data.action || 'success'}`);
 
       // Text-to-Speech Output
       playAudio(data.message, data.language || "Hindi", data.action || "");
@@ -324,7 +324,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
       const msg = err instanceof Error ? err.message : "Something went wrong";
       setError(msg);
       setStatusType("error");
-      setStatusMessage("❌ Error");
+      setStatusMessage("Error");
     } finally {
       setIsLoading(false);
     }
@@ -406,8 +406,8 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
                 </button>
               </div>
 
-              {/* Body — scrollable */}
-              <div className="p-5 space-y-4 max-h-[calc(80vh-120px)] overflow-y-auto">
+              {/* Body */}
+              <div className="p-5 space-y-4">
 
                 {/* Language selector */}
                 <div className="flex items-center gap-3">
