@@ -213,35 +213,21 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
   const trendLabel = trend === "up" ? "Rising" : trend === "down" ? "Falling" : "Stable";
   const trendBg = trend === "up" ? "bg-emerald-50 text-emerald-700" : trend === "down" ? "bg-red-50 text-red-600" : "bg-slate-100 text-slate-600";
 
-  let chartData: any[] = [];
-  if (priceRows.length <= 1 && prediction) {
-    const cp = currentPrice;
-    const tom = prediction?.predicted_price || Math.round(cp * 1.02);
-    const wk = Math.round(predictedPrice);
-    chartData = [
-      { date: formatDate(LAST_UPDATED), price: cp, forecast: cp },
-      { date: "+ 1 Day", price: undefined, forecast: tom },
-      { date: "+ 3 Days", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.4)) },
-      { date: "+ 5 Days", price: undefined, forecast: Math.round(cp + ((wk - cp) * 0.7)) },
-      { date: "+ 7 Days", price: undefined, forecast: wk },
-    ];
-  } else {
-    chartData = priceRows.map((row, idx) => ({
-      date: formatDate(row.date),
-      price: row.modal_price,
-      forecast: (idx === priceRows.length - 1) ? row.modal_price : undefined
-    }));
-    chartData.push({
-      date: "+ 1 Day",
-      price: undefined,
-      forecast: Math.round(prediction?.predicted_price || currentPrice)
-    });
-    chartData.push({
-      date: "+ 7 Days",
-      price: undefined,
-      forecast: Math.round(predictedPrice)
-    });
-  }
+  const chartData = priceRows.map((row, idx) => ({
+    date: formatDate(row.date),
+    price: row.modal_price,
+    forecast: (idx === priceRows.length - 1) ? row.modal_price : undefined
+  }));
+  chartData.push({
+    date: "+ 1 Day",
+    price: undefined,
+    forecast: Math.round(prediction?.predicted_price || currentPrice)
+  });
+  chartData.push({
+    date: "+ 7 Days",
+    price: undefined,
+    forecast: Math.round(predictedPrice)
+  });
 
   const AI_REC = prediction?.recommendation || { action: "WAIT", text: "Analyzing market conditions..." };
   const recStyle = getRecStyle(AI_REC.action);

@@ -82,29 +82,18 @@ export default function PricePredictionPage() {
         setPrediction(predData);
 
         let rows = histData.history || [];
-        let cData = [];
 
         const currentPrice = predData.current_price || 2000;
         const forecastPrice = predData.predicted_price_weekly || Math.round(currentPrice * 1.05);
 
-        const LAST_UPDATED = rows.length > 0 ? rows[rows.length - 1].date : new Date().toISOString();
-        if (rows.length <= 1) {
-          cData = [
-            { date: formatDate(LAST_UPDATED), price: currentPrice, forecast: currentPrice },
-            { date: "+ 1 Day", price: undefined, forecast: Math.round(currentPrice * 1.02) },
-            { date: "+ 3 Days", price: undefined, forecast: Math.round(currentPrice + ((forecastPrice - currentPrice) * 0.4)) },
-            { date: "+ 5 Days", price: undefined, forecast: Math.round(currentPrice + ((forecastPrice - currentPrice) * 0.7)) },
-            { date: "+ 7 Days", price: undefined, forecast: forecastPrice },
-          ];
-        } else {
-          cData = rows.map((row: any, idx: number) => ({
-            date: formatDate(row.date),
-            price: row.price,
-            forecast: (idx === rows.length - 1) ? row.price : undefined
-          }));
-          cData.push({ date: "+ 1 Day", price: undefined, forecast: Math.round(predData.predicted_price || currentPrice) });
-          cData.push({ date: "+ 7 Days", price: undefined, forecast: forecastPrice });
-        }
+        const cData = rows.map((row: any, idx: number) => ({
+          date: formatDate(row.date),
+          price: row.price,
+          forecast: (idx === rows.length - 1) ? row.price : undefined
+        }));
+        cData.push({ date: "+ 1 Day", price: undefined, forecast: Math.round(predData.predicted_price || currentPrice) });
+        cData.push({ date: "+ 7 Days", price: undefined, forecast: forecastPrice });
+        
         setChartData(cData);
         setLoading(false);
 

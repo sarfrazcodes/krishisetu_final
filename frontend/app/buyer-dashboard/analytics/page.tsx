@@ -88,25 +88,13 @@ export default function MarketAnalyticsPage() {
 
         setCurrentAvgPrice(cp);
 
-        let cData: any[] = [];
-        if (rows.length <= 1) {
-          cData = [
-            { day: formatDate(LAST_UPDATED), price: cp, isPrediction: false },
-            { day: "+1 Day", price: Math.round(cp * 1.02), isPrediction: true },
-            { day: "+3 Days", price: Math.round(cp + ((forecastTarget - cp) * 0.4)), isPrediction: true },
-            { day: "+5 Days", price: Math.round(cp + ((forecastTarget - cp) * 0.7)), isPrediction: true },
-            { day: "+7 Days", price: Math.round(forecastTarget), isPrediction: true },
-          ];
-        } else {
-          const last7 = rows.slice(-5);
-          cData = last7.map((r: any) => ({
-            day: formatDate(r.date),
-            price: r.price,
-            isPrediction: false
-          }));
-          cData.push({ day: "+1 Day", price: Math.round(predData.predicted_price || cp), isPrediction: true });
-          cData.push({ day: "+7 Days", price: Math.round(forecastTarget), isPrediction: true });
-        }
+        const cData = rows.map((r: any, idx: number) => ({
+          day: formatDate(r.date),
+          price: r.price,
+          isPrediction: false
+        }));
+        cData.push({ day: "+1 Day", price: Math.round(predData.predicted_price || cp), isPrediction: true });
+        cData.push({ day: "+7 Days", price: Math.round(forecastTarget), isPrediction: true });
 
         // Height Normalization
         const maxPrice = Math.max(...cData.map(d => d.price), cp * 1.1) * 1.1; 
