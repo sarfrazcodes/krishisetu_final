@@ -254,7 +254,7 @@ export default function VoiceDropdown({ isOpen, onClose, triggerRef }: VoiceDrop
     setResult(null);
     setError(null);
     setStatusType("loading");
-    setStatusMessage("Fetching prediction…");
+    setStatusMessage("KrishiSetu AI thinking…");
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
