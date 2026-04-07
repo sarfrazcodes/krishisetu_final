@@ -72,13 +72,7 @@ def process_voice_intent(text: str, role: str = "guest", pathname: str = "/", pa
     """
     
     try:
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "max_output_tokens": 300,  # Limit output to keep responses short
-                "temperature": 0.7,  # Balanced creativity
-            }
-        )
+        response = model.generate_content(prompt)
         raw_text = response.text.strip()
         if raw_text.startswith("```json"):
             raw_text = raw_text[7:-3]
