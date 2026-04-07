@@ -17,7 +17,7 @@ export default function MyListingsPage() {
   const fetchMyListings = async () => {
     try {
       const token = localStorage.getItem("token");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const res = await fetch(`${API_URL}/listings/my-listings`, {
         headers: { "Authorization": `Bearer ${token}` }
       });

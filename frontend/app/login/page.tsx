@@ -42,7 +42,7 @@ export default function LoginPage() {
 
     try {
       // Using deployed backend URL
-      const response = await fetch("https://krishisetu-hhef.onrender.com/auth/login", {
+      const response = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, password })
