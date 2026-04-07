@@ -269,7 +269,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
               <div className="mt-8 flex items-center gap-4">
                 <div className="hidden md:flex items-center gap-3">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#10893E] bg-[#EAF8ED] px-3 py-1.5 rounded-full">
-                    ml model: xg
+                    KrishiSetu Model
                   </span>
                   <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${trend === "up" ? "bg-emerald-400 text-emerald-900" : trend === "down" ? "bg-red-400 text-red-900" : "bg-slate-300 text-slate-800"}`}>
                     {trendIcon} {trend === "up" ? "Rise" : trend === "down" ? "Fall" : "Stable"} (Predicted after 7 days)
@@ -356,7 +356,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
               <CheckCircle2 className="w-5 h-5 text-green-600" />
               <h2 className="text-2xl font-extrabold text-slate-900">{confidence}%</h2>
             </div>
-            <p className="text-[10px] text-slate-400 mt-1 font-bold">{prices.length}-day array • XGBoost Core</p>
+            <p className="text-[10px] text-slate-400 mt-1 font-bold">{prices.length}-day array • KrishiSetu Model</p>
           </div>
         </div>
 
@@ -546,7 +546,7 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
 
         {/* ── FOOTER ── */}
         <p className="text-center text-xs text-slate-400 pt-2 font-bold mb-4">
-          Powered by XGBoost Core & KrishiSetu Infrastructure
+          Powered by KrishiSetu Model & KrishiSetu Infrastructure
         </p>
 
       </div>

@@ -101,7 +101,7 @@ export default function ProcurementPage() {
                 <div className="my-4 md:my-5 p-3 md:p-4 bg-slate-50 rounded-xl md:rounded-2xl border border-slate-100 shadow-inner">
                   <p className="text-[10px] md:text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-1">Available Crop</p>
                   <div className="flex items-center space-x-2">
-                    <span className="text-lg md:text-xl font-black text-[#0A2F1D]">🌾 {item.crop}</span>
+                    <span className="text-lg md:text-xl font-black text-[#0A2F1D] truncate w-full min-w-0" title={item.crop}>🌾 {item.crop}</span>
                   </div>
                   <div className="mt-3 flex justify-between items-end">
                     <div>

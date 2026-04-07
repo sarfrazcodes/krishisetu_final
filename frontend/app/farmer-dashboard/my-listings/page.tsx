@@ -70,7 +70,7 @@ export default function MyListingsPage() {
                   <span className="text-[8px] md:text-[10px] font-black text-[#10893E] bg-[#E9F3E8] px-1.5 md:px-2 py-0.5 rounded-sm uppercase tracking-wide inline-block mb-1">
                     {item.status || "Active Listing"}
                   </span>
-                  <h3 className="text-base md:text-2xl font-black text-[#0A2F1D] leading-tight truncate">{item.crop}</h3>
+                  <h3 className="text-base md:text-2xl font-black text-[#0A2F1D] leading-tight truncate w-full" title={item.crop}>{item.crop}</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 md:gap-4 mb-4">

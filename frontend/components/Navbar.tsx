@@ -66,7 +66,15 @@ export default function Navbar() {
     <>
       <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-emerald-100">
         <div className="flex justify-between items-center px-4 md:px-8 py-3.5">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            
+            {/* Mobile Hamburger Button */}
+            <button 
+              className="md:hidden p-1.5 text-emerald-900 hover:bg-emerald-50 rounded-lg transition-colors"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
 
             {/* Simple Clean Logo */}
             <Link href="/" className="flex items-center gap-3">
@@ -188,13 +196,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile Hamburger Button */}
-            <button 
-              className="md:hidden p-1.5 text-emerald-900 hover:bg-emerald-50 rounded-lg transition-colors"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+
 
           </div>
         </div>

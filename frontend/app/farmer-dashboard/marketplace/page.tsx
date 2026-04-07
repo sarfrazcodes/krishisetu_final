@@ -112,7 +112,9 @@ export default function MarketplacePage() {
                   <p className="text-xs font-bold text-[#8A9A90] uppercase tracking-wider mb-1">Looking For</p>
                   <div className="flex items-center space-x-2">
                     <span className="text-2xl">🌾</span>
-                    <span className="text-xl font-black text-[#0A2F1D]">{item.crop}</span>
+                    <div className="flex items-center space-x-3 w-full min-w-0">
+                      <span className="text-xl font-black text-[#0A2F1D] truncate w-full" title={item.crop}>{item.crop}</span>
+                    </div>
                   </div>
                   <div className="mt-3 flex justify-between items-end">
                     <div>

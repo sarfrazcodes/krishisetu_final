@@ -265,7 +265,7 @@ export default function HomePage() {
       </motion.div>
 
       {/* HERO SECTION */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+      <section className="relative min-h-[60vh] md:min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden pt-24 md:pt-0">
 
         <motion.div style={{ y: yBg }} className="absolute inset-0 w-full h-full z-0 pointer-events-none">
           <div className="absolute top-[15%] left-[-5%] w-[500px] h-[500px] bg-[#10893E] rounded-full mix-blend-multiply filter blur-[120px] opacity-10 animate-pulse"></div>
@@ -284,7 +284,7 @@ export default function HomePage() {
           {[...backgroundWheat, ...midgroundWheat, ...foregroundWheat].map((wheat, idx) => (
             <WavingWheat
               key={idx}
-              className={wheat.color}
+              className={`${wheat.color} ${idx % 2 === 0 ? 'hidden md:block' : ''}`}
               duration={wheat.duration}
               delay={wheat.delay}
               rotation={wheat.rotation}
@@ -345,17 +345,17 @@ export default function HomePage() {
       {/* STATS SECTION - Now fading smoothly from the Hero section! No more harsh line. */}
       <section className="py-24 bg-gradient-to-b from-[#FDF8EE] to-[#F5F0E1] relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-3 gap-2 md:gap-8 text-center items-start">
             {[
               { end: 10000, suffix: "+", label: "Active Farmers" },
               { end: 500, suffix: "+", label: "Mandis Tracked" },
               { end: 94, suffix: "%", label: "AI Accuracy" }
             ].map((stat, idx) => (
               <motion.div key={idx} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: idx * 0.15 }}>
-                <h3 className="heading-serif text-5xl md:text-6xl font-black text-[#0A2F1D] mb-2 drop-shadow-sm">
+                <h3 className="heading-serif text-2xl sm:text-4xl md:text-6xl font-black text-[#0A2F1D] mb-1 md:mb-2 drop-shadow-sm">
                   <AnimatedCounter end={stat.end} suffix={stat.suffix} duration={2500} />
                 </h3>
-                <p className="text-[#10893E] font-bold text-base md:text-lg uppercase tracking-widest">{stat.label}</p>
+                <p className="text-[#10893E] font-bold text-[9px] sm:text-xs md:text-lg uppercase tracking-widest leading-tight">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -427,7 +427,7 @@ export default function HomePage() {
                       {crop.icon}
                     </div>
 
-                    <h3 className="heading-serif text-xl md:text-2xl font-bold text-[#0A2F1D] mb-1">{crop.name}</h3>
+                    <h3 className="heading-serif text-xl md:text-2xl font-bold text-[#0A2F1D] mb-1 truncate w-full px-2" title={crop.name}>{crop.name}</h3>
                     <p className="text-[#10893E]/80 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1">
                       <span className="text-red-500 text-xs">📍</span> {crop.location}
                     </p>
@@ -463,21 +463,21 @@ export default function HomePage() {
             <p className="text-lg md:text-xl text-[#E2DFD3] max-w-3xl mx-auto font-medium">Enterprise-level technology, simplified for the fields.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative bg-white/5 backdrop-blur-sm p-6 md:p-8 rounded-[1.5rem] border border-white/10 shadow-xl overflow-hidden cursor-pointer"
+                className="group relative bg-white/5 backdrop-blur-sm p-4 md:p-8 rounded-[1.5rem] border border-white/10 shadow-xl overflow-hidden cursor-pointer"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
                 <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-3xl mb-5 shadow-inner transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl md:text-3xl mb-3 md:mb-5 shadow-inner transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                     {feature.icon}
                   </div>
-                  <h3 className="heading-serif text-xl font-bold text-[#FDF8EE] mb-3 group-hover:text-[#FBC02D] transition-colors">{feature.title}</h3>
-                  <p className="text-sm md:text-base text-[#CDE0C3] leading-relaxed font-medium">{feature.description}</p>
+                  <h3 className="heading-serif text-base md:text-xl font-bold text-[#FDF8EE] mb-2 md:mb-3 group-hover:text-[#FBC02D] transition-colors">{feature.title}</h3>
+                  <p className="text-[10px] sm:text-xs md:text-base text-[#CDE0C3] leading-relaxed font-medium">{feature.description}</p>
                 </div>
               </motion.div>
             ))}

@@ -143,7 +143,7 @@ export default function CommoditiesPage() {
 
                     <div className="mt-4">
                       <p className="text-[10px] font-bold text-[#8A9A90] uppercase tracking-widest mb-1">{crop.category}</p>
-                      <h3 className="text-2xl font-black text-[#0A2F1D] leading-tight mb-2 truncate" title={crop.name}>{crop.name}</h3>
+                      <h3 className="text-xl md:text-2xl font-black text-[#0A2F1D] leading-tight mb-2 truncate w-full" title={crop.name}>{crop.name}</h3>
                       <div className="flex flex-col">
                         <span className="text-[#627768] text-[11px] font-bold uppercase tracking-wider">Avg Market Baseline</span>
                         <div className="flex items-baseline gap-1 mt-0.5">

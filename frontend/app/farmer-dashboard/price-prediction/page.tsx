@@ -83,7 +83,7 @@ export default function PricePredictionPage() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#0A2F1D] mb-1 drop-shadow-sm flex items-center gap-2 md:gap-3">
             <LineChart className="w-6 h-6 md:w-8 md:h-8 text-[#10893E]" /> Price Forecast Model
           </h1>
-          <p className="text-[#627768] font-medium text-sm md:text-base">Real-time XGBoost trajectories running on live datasets.</p>
+          <p className="text-[#627768] font-medium text-sm md:text-base">Real-time KrishiSetu Model trajectories running on live datasets.</p>
         </div>
 
         {/* MOBILE OPTIMIZED DROPDOWNS */}
