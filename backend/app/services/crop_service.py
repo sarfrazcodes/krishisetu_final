@@ -525,7 +525,7 @@ def generate_weather_advisory(crop: str, mandi: str, temp: float, rain: float, d
             f"Provide a 2 sentence instruction. "
             f"Respond EXACTLY in this JSON format: {{\"instruction\": \"your 2 sentences\"}}"
         )
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
         text = response.text.replace("```json", "").replace("```", "").strip()
         result = json.loads(text)
         return {"instruction": result.get("instruction", "")}
