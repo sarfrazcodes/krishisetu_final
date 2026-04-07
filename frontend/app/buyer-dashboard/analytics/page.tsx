@@ -118,7 +118,8 @@ export default function MarketAnalyticsPage() {
           confidence: "88%",
           action: predData.recommendation?.action || "WAIT",
           reason: predData.recommendation?.text || "Algorithm actively plotting trajectory adjustments based on local indicators.",
-          isPositiveForBuyer: isPositive
+          isPositiveForBuyer: isPositive,
+          model_used: predData.model_used || "KrishiSetu AI"
         });
 
         setLoading(false);
@@ -206,6 +207,11 @@ export default function MarketAnalyticsPage() {
               <div>
                 <h2 className="text-xl md:text-2xl font-black text-[#0A2F1D] flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-[#10893E]" /> Forecast
+                  {insight?.model_used && (
+                    <span className="ml-2 text-[10px] uppercase font-black px-2 py-1 rounded shadow-sm bg-gradient-to-r from-[#10893E] to-[#0A2F1D] text-white tracking-widest leading-none">
+                      {insight.model_used.toLowerCase().includes("gemini") ? "KrishiSetu AI" : "KrishiSetu Model"}
+                    </span>
+                  )}
                 </h2>
                 <p className="text-xs md:text-sm font-bold text-[#627768] mt-1">{selectedCrop} • {selectedMandi}</p>
               </div>

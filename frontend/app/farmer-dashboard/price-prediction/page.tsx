@@ -200,8 +200,11 @@ export default function PricePredictionPage() {
           <div>
             <h2 className="text-lg md:text-xl font-black text-[#0A2F1D] flex items-center gap-2 mb-1">
               <Calendar className="w-4 h-4 md:w-5 md:h-5 text-[#10893E]" /> 30-Day Predictive Trajectory
+              <span className="ml-2 text-[10px] uppercase font-black px-2 py-1 rounded shadow-sm bg-gradient-to-r from-[#10893E] to-[#0A2F1D] text-white">
+                {prediction?.model_used?.toLowerCase().includes("gemini") ? "KrishiSetu AI" : "KrishiSetu Model"}
+              </span>
             </h2>
-            <p className="text-[#627768] font-bold text-[10px] md:text-sm">Historical API vs. AI Projection for {selectedMandi}</p>
+            <p className="text-[#627768] font-bold text-[10px] md:text-sm">Historical API vs. Algorithm Projection for {selectedMandi}</p>
           </div>
           <div className="bg-[#FDF8EE] border border-[#E2DFD3] p-3 md:p-4 rounded-xl text-left sm:text-right w-full sm:w-auto">
             <p className="text-[#8A9A90] text-[10px] md:text-xs font-bold uppercase tracking-widest mb-0.5 md:mb-1">Predicted 7-Day Target</p>
