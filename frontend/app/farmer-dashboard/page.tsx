@@ -28,6 +28,7 @@ export default function FarmerDashboardOverview() {
   const [predictedPrices, setPredictedPrices] = useState<any[]>([]);
   const [forecastTarget, setForecastTarget] = useState(2450);
   const [loadingChart, setLoadingChart] = useState(true);
+  const [chartError, setChartError] = useState(false);
 
   // Mount animations and time-based greeting
   useEffect(() => {
@@ -73,8 +74,14 @@ export default function FarmerDashboardOverview() {
 
     // Fetch Graph History + Prediction
     Promise.all([
-      fetch(`${API_BASE}/crops/Wheat (Lok-1)/history?mandi=Ludhiana APMC`).then(r => r.json()),
-      fetch(`${API_BASE}/crops/Wheat (Lok-1)/predict?mandi=Ludhiana APMC`).then(r => r.json())
+      fetch(`${API_BASE}/crops/Wheat (Lok-1)/history?mandi=Ludhiana APMC`).then(r => {
+        if (!r.ok) throw new Error("API failed");
+        return r.json();
+      }),
+      fetch(`${API_BASE}/crops/Wheat (Lok-1)/predict?mandi=Ludhiana APMC`).then(r => {
+        if (!r.ok) throw new Error("API failed");
+        return r.json();
+      })
     ]).then(([histData, predData]) => {
       const rows = histData.history || [];
       const cp = predData.current_price || 2000;
@@ -101,6 +108,7 @@ export default function FarmerDashboardOverview() {
       setPredictedPrices(cData);
       setLoadingChart(false);
     }).catch(() => {
+      setChartError(true);
       setLoadingChart(false);
     });
 

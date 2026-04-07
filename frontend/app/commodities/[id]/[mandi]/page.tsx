@@ -93,15 +93,23 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
   const [prediction, setPrediction] = useState<any>(null);
   const [weatherAdvisory, setWeatherAdvisory] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
+    setApiError(false);
     const API_BASE = "https://krishisetu-hhef.onrender.com";
 
     // 1. Instantly pull History and numerical ML trajectory
     Promise.all([
-      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/history?mandi=${encodeURIComponent(mandiId)}`).then(r => r.json()),
-      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/predict?mandi=${encodeURIComponent(mandiId)}`).then(r => r.json())
+      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/history?mandi=${encodeURIComponent(mandiId)}`).then(r => {
+        if (!r.ok) throw new Error("API returned non-200 status");
+        return r.json();
+      }),
+      fetch(`${API_BASE}/crops/${encodeURIComponent(cropId)}/predict?mandi=${encodeURIComponent(mandiId)}`).then(r => {
+        if (!r.ok) throw new Error("API returned non-200 status");
+        return r.json();
+      })
     ])
       .then(([histData, predData]) => {
         setHistory(histData.history || []);
@@ -119,11 +127,8 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
           });
       })
       .catch(err => {
-        if (err instanceof Error && err.message === "Failed to fetch") {
-          console.warn("Network offline simulation blocked the fetch request.");
-        } else {
-          console.error(err);
-        }
+        console.error("API Network Error:", err);
+        setApiError(true);
         setLoading(false);
       });
   }, [cropId, mandiId]);
@@ -147,6 +152,21 @@ export default function DashboardPage({ params }: { params: Promise<{ id: string
       </div>
     );
   }
+
+  if (apiError) return (
+    <div className="min-h-screen bg-[#FDF8EE] p-6 flex items-center justify-center">
+      <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center max-w-md text-center">
+        <AlertTriangle className="w-12 h-12 text-red-500 mb-4 animate-pulse" />
+        <h2 className="text-xl font-black text-[#0A2F1D] mb-2">Connecting to Intelligence Engine...</h2>
+        <p className="text-sm font-medium text-[#627768] mb-6">
+          The KrishiSetu Render backend is waking up or temporarily unavailable. Please click below to refresh the connection.
+        </p>
+        <button onClick={() => window.location.reload()} className="bg-[#10893E] text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-[#0c6b30] transition-colors">
+          Refresh Connection
+        </button>
+      </div>
+    </div>
+  );
 
   // 1. DATA MAPPING
   const COMMODITY_NAME = prediction?.crop || cropId;

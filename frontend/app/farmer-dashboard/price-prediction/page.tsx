@@ -12,6 +12,7 @@ export default function PricePredictionPage() {
   const [chartData, setChartData] = useState<any[]>([]);
   const [prediction, setPrediction] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState(false);
   const [availableMandis, setAvailableMandis] = useState<string[]>([]);
   const [availableCrops, setAvailableCrops] = useState<any[]>([]);
 
@@ -33,18 +34,23 @@ export default function PricePredictionPage() {
         const sorted = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
         setAvailableCrops(sorted);
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        setApiError(true);
+      });
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
     setLoading(true);
+    setApiError(false);
     const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
 
     const fetchAllData = async () => {
       try {
         // 1. Fetch mandis available for crop
         const cropRes = await fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}`);
+        if (!cropRes.ok) throw new Error("Failed to fetch crops");
         const cropData = await cropRes.json();
         const mandiList = cropData.mandis ? cropData.mandis.map((m: any) => m.name) : [];
         setAvailableMandis(mandiList);
@@ -67,6 +73,8 @@ export default function PricePredictionPage() {
           fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}/history?mandi=${encodeURIComponent(targetMandi)}`),
           fetch(`${API_BASE}/crops/${encodeURIComponent(selectedCrop)}/predict?mandi=${encodeURIComponent(targetMandi)}`)
         ]);
+
+        if (!histRes.ok || !predRes.ok) throw new Error("API returned non-200 status");
 
         const histData = await histRes.json();
         const predData = await predRes.json();
@@ -101,7 +109,8 @@ export default function PricePredictionPage() {
         setLoading(false);
 
       } catch (err) {
-        console.error(err);
+        console.error("API Network Error:", err);
+        setApiError(true);
         setLoading(false);
       }
     };
@@ -110,6 +119,20 @@ export default function PricePredictionPage() {
   }, [selectedCrop, selectedMandi, mounted]);
 
   if (!mounted) return null;
+  if (apiError) return (
+    <main className="p-4 md:p-8 relative z-10 w-full min-h-[50vh] flex items-center justify-center">
+      <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center max-w-md text-center">
+        <AlertTriangle className="w-12 h-12 text-red-500 mb-4 animate-pulse" />
+        <h2 className="text-xl font-black text-[#0A2F1D] mb-2">Connecting to Intelligence Engine...</h2>
+        <p className="text-sm font-medium text-[#627768] mb-6">
+          The KrishiSetu Render backend is waking up or temporarily unavailable. Please click below to refresh the connection.
+        </p>
+        <button onClick={() => window.location.reload()} className="bg-[#10893E] text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-[#0c6b30] transition-colors">
+          Refresh Connection
+        </button>
+      </div>
+    </main>
+  );
 
   const currentPrice = prediction?.current_price || 0;
   const forecastPrice = prediction?.predicted_price_weekly || 0;
