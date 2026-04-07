@@ -572,7 +572,6 @@ def predict_crop_price(name: str, mandi_name: str | None = None) -> dict:
         mock_pred = round(base_val + ((mock_weekly - base_val) * 0.3)) # Tomorrow is 30% towards weekly goal
 
         weather = _fetch_weather(mandi_name or normalized)
-        advisory = _get_detailed_advisory(normalized, mandi_name or normalized, base_val, mock_weekly, weather)
         
         return {
             "crop":            normalized,
@@ -581,7 +580,7 @@ def predict_crop_price(name: str, mandi_name: str | None = None) -> dict:
             "predicted_price_weekly": mock_weekly,
             "model_used":      f"heuristic_{normalized.lower()}",
             "weather":         weather,
-            "recommendation":  advisory,
+            "recommendation":  {"action": "HOLD", "text": "Analyzing market conditions across historical data structures..."},
             "error":           "Insufficient data for full ML pipeline" if not current_price else None,
         }
 
