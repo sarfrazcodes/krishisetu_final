@@ -12,6 +12,7 @@ export default function MarketAnalyticsPage() {
   const [currentAvgPrice, setCurrentAvgPrice] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [insight, setInsight] = useState<any>(null);
 
   const [availableMandis, setAvailableMandis] = useState<string[]>([]);
@@ -28,16 +29,21 @@ export default function MarketAnalyticsPage() {
     setMounted(true);
     const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://krishisetu-hhef.onrender.com";
     fetch(`${API_BASE}/crops`)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error("Crops API error");
+        return r.json()
+      })
       .then(data => {
         const sorted = data.sort((a: any, b: any) => a.name.localeCompare(b.name));
         setAvailableCrops(sorted);
+        setApiError(false);
       })
       .catch(err => {
         console.error(err);
         setApiError(true);
+        setTimeout(() => setRetryCount(prev => prev + 1), 6000);
       });
-  }, []);
+  }, [retryCount]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -119,24 +125,25 @@ export default function MarketAnalyticsPage() {
       } catch (err) {
         console.error("API Network Error:", err);
         setApiError(true);
-        setLoading(false);
+        setTimeout(() => { if (mounted) setRetryCount(prev => prev + 1); }, 6000);
       }
     };
 
     fetchAllData();
-  }, [selectedCrop, selectedMandi, mounted]);
+  }, [selectedCrop, selectedMandi, mounted, retryCount]);
 
   if (!mounted) return null;
   if (apiError) return (
     <main className="p-4 md:p-8 relative z-10 w-full min-h-[50vh] flex items-center justify-center">
-      <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center max-w-md text-center">
+      <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-[#10893E]/20 flex flex-col items-center max-w-md text-center">
+        <div className="relative flex items-center justify-center animate-pulse mb-6">
+          <div className="w-16 h-16 border-4 border-[#10893E]/20 rounded-full"></div>
+          <div className="absolute w-16 h-16 border-4 border-[#10893E] border-t-transparent rounded-full animate-spin"></div>
+        </div>
         <h2 className="text-xl font-black text-[#0A2F1D] mb-2">Connecting to Intelligence Engine...</h2>
-        <p className="text-sm font-medium text-[#627768] mb-6">
-          The KrishiSetu Render backend is waking up or temporarily unavailable. Please click below to refresh the connection.
+        <p className="text-sm font-medium text-[#627768]">
+          The KrishiSetu backend is waking up or temporarily unavailable. Automatically retrying...
         </p>
-        <button onClick={() => window.location.reload()} className="bg-[#10893E] text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-[#0c6b30] transition-colors">
-          Refresh Connection
-        </button>
       </div>
     </main>
   );
